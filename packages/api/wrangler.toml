@@ -1,0 +1,11 @@
+name = "tooltrackr-api"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tooltrackr"
+database_id = "f4c86831-6c3b-4fb0-bcbe-7f4d98614354"
+
+[vars]
+JWT_SECRET = "tooltrackr-super-secret-key-change-this-2025"

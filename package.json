@@ -1,0 +1,31 @@
+{
+  "name": "tooltrackr-cloud",
+  "private": true,
+  "description": "ToolTrackr Cloud Monorepo",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace=packages/api",
+    "dev:ui": "npm run dev --workspace=packages/frontend",
+    "deploy:api": "npm run deploy --workspace=packages/api",
+    "deploy:ui": "npm run deploy --workspace=packages/frontend",
+    "test": "npm test --workspaces"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "@tanstack/react-query": "^5.90.21",
+    "axios": "^1.13.6",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.575.0",
+    "react-hook-form": "^7.71.2",
+    "react-router-dom": "^7.13.1",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.1",
+    "zod": "^4.3.6"
+  }
+}

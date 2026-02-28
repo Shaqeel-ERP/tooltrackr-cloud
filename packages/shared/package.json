@@ -1,0 +1,7 @@
+{
+  "name": "@tooltrackr/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/schemas.js",
+  "exports": { ".": "./src/schemas.js" }
+}
