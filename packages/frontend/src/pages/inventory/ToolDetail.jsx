@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useParams } from "react-router-dom"
 import { Edit, PackageOpen, Wrench, FileClock, HandMetal, AlertTriangle } from "lucide-react"
@@ -57,6 +58,7 @@ export function ToolDetail() {
   const expectedTotal = stockByLocation.reduce((acc, loc) => acc + (loc.quantity || 0), 0)
 
   return (
+    <ErrorBoundary>
     <div className="flex flex-col gap-6">
       <PageHeader 
         title={tool.name} 
@@ -306,5 +308,7 @@ export function ToolDetail() {
         />
       )}
     </div>
+
+    </ErrorBoundary>
   )
 }

@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -42,7 +43,8 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-100 via-slate-50 to-slate-200 p-4">
+    <ErrorBoundary>
+      <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-100 via-slate-50 to-slate-200 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-8 sm:p-10 animate-in fade-in zoom-in-95 duration-500">
         
         <div className="flex flex-col items-center justify-center space-y-3 mb-8">
@@ -103,5 +105,6 @@ export function LoginPage() {
         </div>
       </div>
     </div>
+    </ErrorBoundary>
   )
 }

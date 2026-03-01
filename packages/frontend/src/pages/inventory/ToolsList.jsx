@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
 import { Plus, Eye, Edit, Trash2, Search, X } from "lucide-react"
@@ -24,7 +25,7 @@ export function ToolsList() {
   const [search, setSearch] = React.useState("")
   const [category, setCategory] = React.useState("all")
   const [locationId, setLocationId] = React.useState("all")
-  const [status, setStatus] = React.useState("Active")
+  const [status, setStatus] = React.useState("active")
 
   // Modals state
   const [isFormOpen, setIsFormOpen] = React.useState(false)
@@ -50,10 +51,10 @@ export function ToolsList() {
     setSearch("")
     setCategory("all")
     setLocationId("all")
-    setStatus("Active")
+    setStatus("active")
   }
 
-  const hasActiveFilters = search || category !== "all" || locationId !== "all" || status !== "Active"
+  const hasActiveFilters = search || category !== "all" || locationId !== "all" || status !== "active"
 
   // Filter tools client-side for category (since API doesn't have it in prompt)
   const filteredTools = React.useMemo(() => {
@@ -170,7 +171,8 @@ export function ToolsList() {
   ]
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader 
         title="Tools Inventory" 
         actions={isManager && (
@@ -218,8 +220,8 @@ export function ToolsList() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Deleted">Deleted</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="deleted">Deleted</SelectItem>
             </SelectContent>
           </Select>
         )}
@@ -275,5 +277,7 @@ export function ToolsList() {
         />
       )}
     </div>
+
+    </ErrorBoundary>
   )
 }

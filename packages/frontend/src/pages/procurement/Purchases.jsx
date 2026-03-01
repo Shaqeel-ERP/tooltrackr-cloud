@@ -1,7 +1,8 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
-import { usePurchases } from "@/lib/queries"
+import { usePurchases, usePurchaseDetail } from "@/lib/queries"
 import { useAuth } from "@/lib/auth"
-import { useReceivePurchase, useUpdatePurchaseStatus } from "@/lib/mutations"
+import { useReceivePurchase } from "@/lib/mutations"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +12,12 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { Plus, ChevronDown, ChevronUp, PackageCheck, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-function ExpandedRow({ po, isManager, onReceive }) {
+function ExpandedRow({ poId, isManager, onReceive }) {
+  const { data: po, isLoading } = usePurchaseDetail(poId)
+
+  if (isLoading) return <div className="p-6 text-center text-slate-500 animate-pulse bg-slate-50">Loading line items...</div>
+  if (!po) return <div className="p-6 text-center text-red-500 bg-slate-50">Failed to load details.</div>
+
   const items = po.items || []
 
   return (
@@ -100,7 +106,8 @@ export function PurchasesPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader 
         title="Purchase Orders" 
         actions={isManager && (
@@ -134,7 +141,7 @@ export function PurchasesPage() {
               <tbody className="divide-y divide-slate-100">
                 {purchases.map(po => {
                    const isExpanded = expandedRows.has(po.id)
-                   const itemsCount = (po.items || []).length
+                  const itemsCount = po.item_count || 0
 
                    return (
                      <React.Fragment key={po.id}>
@@ -181,7 +188,7 @@ export function PurchasesPage() {
                          <tr>
                             <td colSpan="9" className="p-0 border-0">
                                <div className="animate-in slide-in-from-top-2 fade-in duration-200">
-                                 <ExpandedRow po={po} isManager={isManager} onReceive={receivePurchase} />
+                               <ExpandedRow poId={po.id} isManager={isManager} onReceive={receivePurchase} />
                                </div>
                             </td>
                          </tr>
@@ -197,5 +204,6 @@ export function PurchasesPage() {
 
       <PurchaseOrderModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
+    </ErrorBoundary>
   )
 }

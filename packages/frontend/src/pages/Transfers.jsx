@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useTransfers, useLocations, useTools } from "@/lib/queries"
 import { useAuth } from "@/lib/auth"
@@ -6,7 +7,7 @@ import { PageHeader } from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Plus, Loader2, Info, Lock } from "lucide-react"
-import { TransferModal } from "../../components/transfers/TransferModal"
+import { TransferModal } from "@/components/transfers/TransferModal"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 import { cn } from "@/lib/utils"
 
@@ -129,7 +130,8 @@ export function TransfersPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 h-full min-h-[calc(100vh-6rem)]">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6 h-full min-h-[calc(100vh-6rem)]">
       <PageHeader 
         title="Stock Transfers" 
         actions={
@@ -202,5 +204,7 @@ export function TransfersPage() {
 
       <TransferModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
+  
+    </ErrorBoundary>
   )
 }

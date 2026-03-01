@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -6,7 +7,7 @@ import {
   Building2, Plus, Edit, Mail, Phone, MapPin, Loader2
 } from "lucide-react"
 import { useSuppliers } from "@/lib/queries"
-import { useCreateSupplier, useUpdateSupplier } from "@/lib/mutations"
+import { useAddSupplier, useUpdateSupplier } from "@/lib/mutations"
 import { useAuth } from "@/lib/auth"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { DataTable } from "@/components/shared/DataTable"
@@ -28,7 +29,7 @@ const schema = z.object({
 })
 
 function SupplierModal({ isOpen, onClose, supplier }) {
-  const { mutateAsync: createSupplier, isPending: isCreating } = useCreateSupplier()
+  const { mutateAsync: createSupplier, isPending: isCreating } = useAddSupplier()
   const { mutateAsync: updateSupplier, isPending: isUpdating } = useUpdateSupplier()
   const isPending = isCreating || isUpdating
 
@@ -214,7 +215,8 @@ export function SuppliersPage() {
   ]
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader 
         title="Suppliers" 
         actions={isManager && (
@@ -241,5 +243,7 @@ export function SuppliersPage() {
         supplier={editingSupplier} 
       />
     </div>
+
+    </ErrorBoundary>
   )
 }

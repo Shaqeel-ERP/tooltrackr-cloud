@@ -1,0 +1,32 @@
+﻿> curl https://tooltrackr-api.tooltrackr.workers.dev/api/analytics/dashboard -H "Authorization: Bearer <TOKEN>"
+200 OK
+{"tools_total":43,"workers_total":18,"active_loans":86,"overdue":70,"low_stock":24,"movements_today":0,"low_items":[{"sku":"RV004","name":"RV Safety Shoe 42","loc_name":"Main Inventory","quantity":0,"min_stock_level":1},{"sku":"CVR005","name":"Blue Coverall (2XL)","loc_name":"Main Inventory","quanti...
+
+> curl https://tooltrackr-api.tooltrackr.workers.dev/api/tools -H "Authorization: Bearer <TOKEN>"
+200 OK
+[{"id":21,"sku":"JET001","name":" JETECH Ratchet","description":"","category":"Tools","brand":"JETECH","model":"","serial_number":"","supplier_id":5,"min_stock_level":1,"unit_of_measure":"piece","status":"active","created_at":"2025-08-04 18:46:17","updated_at":1755425580038,"supplier_name":"Halai Tr...
+
+> curl https://tooltrackr-api.tooltrackr.workers.dev/api/lending?status=active -H "Authorization: Bearer <TOKEN>"
+200 OK
+[{"id":86,"tool_id":13,"worker_id":4,"location_id":1,"quantity":1,"date_out":1766448000000,"expected_return_date":1776902400000,"actual_return_date":null,"return_location_id":null,"return_condition":null,"project_code":"","job_site":"","issued_by":"warehouse_manager","returned_to":null,"notes":"","s...
+
+> curl https://tooltrackr-api.tooltrackr.workers.dev/api/transfers -H "Authorization: Bearer <TOKEN>"
+500 OK
+{"error":"D1_ERROR: no such column: tr.tool_id: SQLITE_ERROR"}...
+
+> curl https://tooltrackr-api.tooltrackr.workers.dev/api/purchases -H "Authorization: Bearer <TOKEN>"
+200 OK
+[{"id":39,"supplier_id":6,"invoice_number":"00032","invoice_date":1768780800000,"total_amount":273,"tax_amount":13,"discount_amount":0,"payment_status":"paid","payment_date":1769040000000,"delivery_date":1768953600000,"received_by":"warehouse_manager","notes":"","status":"completed","created_by":"wa...
+
+> curl https://tooltrackr-api.tooltrackr.workers.dev/api/locations -H "Authorization: Bearer <TOKEN>"
+200 OK
+[{"id":2,"name":"Accommodation Inventory","address":"Dubai Hor Al Anz","manager":"Muhammad Arshad","contact_info":"0567904250","location_type":"other","status":"active","created_at":"2025-08-04 18:36:58","updated_at":"2025-08-04 18:39:34"},{"id":1,"name":"Main Inventory","address":"Sharjah Al Qadsiy...
+
+> curl https://tooltrackr-api.tooltrackr.workers.dev/api/workers -H "Authorization: Bearer <TOKEN>"
+200 OK
+[{"id":1,"name":"AMJID FAROOQ HAKAM ALI","email":"jab-tech@outlook.com","phone":"567937157","address":"Dubai","company":"employee","worker_type":"Hor Al Anz","status":"active","created_by":"system","updated_by":null,"active_loans":3,"total_returns":0,"reliability_score":null},{"id":2,"name":"ARSHAD ...
+
+> curl https://tooltrackr-api.tooltrackr.workers.dev/api/suppliers -H "Authorization: Bearer <TOKEN>"
+200 OK
+[{"id":1,"name":"A One Tools Trading L.L.C","contact_info":"042238360","address":"Dubai Deira","notes":"Spirit Level Magnet & Lanyard Spiral Type","status":"active","created_at":"2025-08-04 18:37:39","updated_at":"2025-08-04 18:37:39"},{"id":2,"name":"Abid & Ali Asgar General Trading L.L.C (AAA)","c...
+

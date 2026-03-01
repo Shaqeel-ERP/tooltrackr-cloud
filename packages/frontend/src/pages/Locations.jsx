@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
 import { Plus, MapPin, User, Package, Wrench, ArrowRightLeft, ExternalLink } from "lucide-react"
@@ -28,7 +29,8 @@ export function LocationsList() {
   const { data: locations, isLoading } = useLocations()
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader 
         title="Locations" 
         actions={isAdmin && (
@@ -82,9 +84,9 @@ export function LocationsList() {
 
                <div className="bg-slate-50/50 p-5 pt-4">
                  <div className="grid grid-cols-3 gap-2 mb-4">
-                   <StatBox icon={Wrench} label="Tools" value={loc.stats?.total_tools || 0} />
-                   <StatBox icon={Package} label="Units" value={loc.stats?.total_quantity || 0} />
-                   <StatBox icon={ArrowRightLeft} label="Transfers" value={loc.stats?.active_transfers || 0} />
+                  <StatBox icon={Wrench} label="Tools" value={loc.total_tools || 0} />
+                  <StatBox icon={Package} label="Units" value={loc.total_quantity || 0} />
+                  <StatBox icon={ArrowRightLeft} label="Transfers" value={loc.active_transfers || 0} />
                  </div>
                  <Button className="w-full bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-sm" onClick={() => navigate(`/locations/${loc.id}`)}>
                     View Details
@@ -95,5 +97,6 @@ export function LocationsList() {
         </div>
       )}
     </div>
+    </ErrorBoundary>
   )
 }

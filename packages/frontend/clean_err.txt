@@ -1,0 +1,55 @@
+﻿[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 17 modules transformed.
+node.exe : [31mx[39m Build failed in 525ms
+At C:\Program Files\nodejs\npx.ps1:29 char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecifie   
+ d: ([31mx[39m Build failed in 525ms    
+:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeComma   
+ ndError
+ 
+[31merror during build:
+[31m[vite:esbuild] Transform failed with 1 
+error:
+D:/ToolTrackr/tooltrackr-cloud/packages/fron
+tend/src/pages/NotFound.jsx:24:0: ERROR: 
+Unexpected end of file before a closing 
+"ErrorBoundary" tag[31m
+file: [36mD:/ToolTrackr/tooltrackr-cloud/pa
+ckages/frontend/src/pages/NotFound.jsx:24:0
+[31m
+[33m
+[33mUnexpected end of file before a 
+closing "ErrorBoundary" tag[33m
+22 |    )
+23 |  }
+24 |  
+   |  ^
+[31m
+    at failureErrorWithLog (D:\ToolTrackr\to
+oltrackr-cloud\packages\frontend\node_module
+s\esbuild\lib\main.js:1472:15)
+    at D:\ToolTrackr\tooltrackr-cloud\packag
+es\frontend\node_modules\esbuild\lib\main.js
+:755:50
+    at responseCallbacks.<computed> (D:\Tool
+Trackr\tooltrackr-cloud\packages\frontend\no
+de_modules\esbuild\lib\main.js:622:9)
+    at handleIncomingPacket (D:\ToolTrackr\t
+ooltrackr-cloud\packages\frontend\node_modul
+es\esbuild\lib\main.js:677:12)
+    at Socket.readFromStdout (D:\ToolTrackr\
+tooltrackr-cloud\packages\frontend\node_modu
+les\esbuild\lib\main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk 
+(node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode 
+(node:internal/streams/readable:512:3)
+    at Readable.push 
+(node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stre
+am_base_commons:189:23)[39m

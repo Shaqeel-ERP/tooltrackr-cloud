@@ -1,10 +1,12 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { Link } from "react-router-dom"
 import { Search, ArrowLeft } from "lucide-react"
 
 export function NotFoundPage() {
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
+    <ErrorBoundary>
+      <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center flex flex-col items-center">
         <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-6">
            <Search className="w-8 h-8 text-slate-400" />
@@ -16,6 +18,7 @@ export function NotFoundPage() {
           <ArrowLeft className="w-4 h-4" /> Go Home
         </Link>
       </div>
-    </div>
+      </div>
+    </ErrorBoundary>
   )
 }

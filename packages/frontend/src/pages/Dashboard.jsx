@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -75,7 +76,8 @@ export function Dashboard() {
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader title="Dashboard" subtitle={todayFormatted} />
 
       {/* STAT CARDS */}
@@ -133,9 +135,9 @@ export function Dashboard() {
             )}
           </div>
           {validLowItems.length > 8 && (
-            <div className="p-3 bg-slate-50 border-t border-slate-200 text-center">
-              <Link to="/inventory" className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">View all alerts →</Link>
-            </div>
+              <div className="p-3 bg-slate-50 border-t border-slate-200 text-center">
+                <Link to="/inventory" className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">View all alerts →</Link>
+              </div>
           )}
         </div>
 
@@ -165,32 +167,33 @@ export function Dashboard() {
                  {stats.overdue_items.slice(0, 8).map((loan, idx) => {
                    const daysOverdue = Math.floor((Date.now() - new Date(loan.expected_return_date).getTime()) / 86400000);
                    return (
-                   <div key={idx} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                     <div className="min-w-0 pr-4">
-                       <div className="flex items-center gap-2 mb-1">
-                         <span className="font-medium text-slate-900 truncate">{loan.worker_name}</span>
-                         {loan.phone && <a href={`tel:${loan.phone}`} className="text-xs text-slate-400 hover:text-blue-600 hover:underline">{loan.phone}</a>}
+                     <div key={idx} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                       <div className="min-w-0 pr-4">
+                         <div className="flex items-center gap-2 mb-1">
+                           <span className="font-medium text-slate-900 truncate">{loan.worker_name}</span>
+                           {loan.phone && <a href={`tel:${loan.phone}`} className="text-xs text-slate-400 hover:text-blue-600 hover:underline">{loan.phone}</a>}
+                         </div>
+                         <div className="flex items-center gap-2">
+                           <p className="text-xs text-slate-600 truncate">{loan.tool_name}</p>
+                           <span className="px-1.5 py-0.5 bg-slate-100 text-slate-500 font-mono text-[10px] rounded border border-slate-200">{loan.sku}</span>
+                         </div>
                        </div>
-                       <div className="flex items-center gap-2">
-                          <p className="text-xs text-slate-600 truncate">{loan.tool_name}</p>
-                          <span className="px-1.5 py-0.5 bg-slate-100 text-slate-500 font-mono text-[10px] rounded border border-slate-200">{loan.sku}</span>
+                       <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                         <span className="bg-red-100 text-red-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide">
+                           {daysOverdue > 0 ? `${daysOverdue} day${daysOverdue > 1 ? 's' : ''} late` : `Due Today`}
+                         </span>
+                         <Button variant="outline" size="sm" className="h-7 text-xs px-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300" onClick={() => setReturnLoan(loan)}>Return x{loan.quantity}</Button>
                        </div>
                      </div>
-                     <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                       <span className="bg-red-100 text-red-700 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide">
-                         {daysOverdue > 0 ? `${daysOverdue} day${daysOverdue > 1 ? 's' : ''} late` : `Due Today`}
-                       </span>
-                       <Button variant="outline" size="sm" className="h-7 text-xs px-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300" onClick={() => setReturnLoan(loan)}>Return x{loan.quantity}</Button>
-                     </div>
-                   </div>
-                 )})}
+                   )
+                 })}
                </div>
             )}
           </div>
           {(stats.overdue_items || []).length > 8 && (
-            <div className="p-3 bg-slate-50 border-t border-slate-200 text-center">
-              <Link to="/lending?tab=overdue" className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">View all overdue →</Link>
-            </div>
+              <div className="p-3 bg-slate-50 border-t border-slate-200 text-center">
+                <Link to="/lending?tab=overdue" className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">View all overdue →</Link>
+              </div>
           )}
         </div>
 
@@ -237,5 +240,6 @@ export function Dashboard() {
       <StockAdjustmentModal isOpen={!!adjustItem} onClose={() => setAdjustItem(null)} item={adjustItem} />
       <ReturnToolModal isOpen={!!returnLoan} onClose={() => setReturnLoan(null)} loan={returnLoan} />
     </div>
+    </ErrorBoundary>
   );
 }

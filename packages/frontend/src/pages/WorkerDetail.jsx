@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useParams, Link } from "react-router-dom"
 import { Edit, Mail, Phone, MapPin, Building2, Package, CheckCircle2, RotateCcw } from "lucide-react"
@@ -9,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { StatusBadge } from "@/components/shared/StatusBadge"
-import { ReturnToolModal } from "../../components/lending/ReturnToolModal"
+import { ReturnToolModal } from "@/components/lending/ReturnToolModal"
 import { DataTable } from "@/components/shared/DataTable"
 import { cn } from "@/lib/utils"
 
@@ -52,12 +53,21 @@ export function WorkerDetail() {
 
   if (!worker) return <div className="p-8 text-center text-slate-500">Worker not found.</div>
 
-  const activeLoans = worker.active_loans || []
-  const historyLoans = worker.history || []
+  const allLoans = worker.loans || []
+  const activeLoans = allLoans.filter(l => !l.returned_at && !l.actual_return_date)
+  const historyLoans = allLoans.filter(l => l.returned_at || l.actual_return_date)
 
   // Stats calculation
-  const totalCompleted = worker.total_completed_loans || 0
-  const reliability = worker.reliability_score
+  const totalCompleted = historyLoans.length
+
+  const onTimeReturns = historyLoans.filter(l => {
+    const act = l.returned_at || l.actual_return_date
+    const exp = l.expected_return_date
+    if (!exp) return true
+    return new Date(act).getTime() <= new Date(exp).getTime()
+  }).length
+
+  const reliability = totalCompleted > 0 ? (onTimeReturns / totalCompleted) * 100 : null
   let relColor = "default"
   if (reliability !== null && reliability !== undefined) {
     if (reliability >= 80) relColor = "success"
@@ -85,7 +95,8 @@ export function WorkerDetail() {
   ]
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader 
         title={worker.name} 
         subtitle={`${worker.worker_type} ${worker.company ? `· ${worker.company}` : ''}`}
@@ -107,9 +118,9 @@ export function WorkerDetail() {
 
       {/* STATS ROW */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard title="Active Loans" value={worker.active_loans_count || 0} icon={Package} variant="default" />
-        <StatCard title="Total Loans" value={worker.total_loans || 0} icon={RotateCcw} variant="default" />
-        <StatCard title="On-Time Returns" value={worker.on_time_returns || 0} icon={CheckCircle2} variant="success" />
+          <StatCard title="Active Loans" value={activeLoans.length} icon={Package} variant="default" />
+          <StatCard title="Total Loans" value={allLoans.length} icon={RotateCcw} variant="default" />
+          <StatCard title="On-Time Returns" value={onTimeReturns} icon={CheckCircle2} variant="success" />
         <div className={cn("bg-white rounded-xl border p-4 shadow-sm flex flex-col justify-between", 
             relColor === 'success' ? "border-green-200" : relColor === 'warning' ? "border-amber-200" : relColor === 'danger' ? "border-red-200" : "border-slate-200"
         )}>
@@ -187,5 +198,6 @@ export function WorkerDetail() {
 
       <ReturnToolModal isOpen={!!returnLoan} onClose={() => setReturnLoan(null)} loan={returnLoan} />
     </div>
+    </ErrorBoundary>
   )
 }

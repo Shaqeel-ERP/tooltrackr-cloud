@@ -29,7 +29,7 @@ app.route('/api/auth', authRoutes);
 
 // JWT guard
 app.use('/api/*', async (c, next) => {
-  return jwt({ secret: c.env.JWT_SECRET })(c, next);
+  return jwt({ secret: c.env.JWT_SECRET, alg: 'HS256' })(c, next);
 });
 
 app.route('/api/tools',      toolRoutes);

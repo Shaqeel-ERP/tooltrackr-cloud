@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
@@ -44,13 +45,13 @@ function StockLevelsTab() {
   const [status, setStatus] = React.useState("all")
 
   // Derive unique options
-  const locations = React.useMemo(() => [...new Set(report.map(r => r.location_name).filter(Boolean))], [report])
+  const locations = React.useMemo(() => [...new Set(report.map(r => r.loc_name).filter(Boolean))], [report])
   const categories = React.useMemo(() => [...new Set(report.map(r => r.category).filter(Boolean))], [report])
 
   // Filter
   const filtered = React.useMemo(() => {
     return report.filter(r => {
-       if (location !== "all" && r.location_name !== location) return false
+      if (location !== "all" && r.loc_name !== location) return false
        if (category !== "all" && r.category !== category) return false
        const avail = r.quantity - r.reserved_quantity
        const rStatus = avail === 0 ? 'out' : (avail <= (r.min_stock_level || 0) && r.min_stock_level > 0 ? 'low' : 'ok')
@@ -67,9 +68,9 @@ function StockLevelsTab() {
   const handleExport = () => {
     exportCSV("stock_levels_report", filtered.map(r => ({
       SKU: r.sku,
-      ToolName: r.tool_name,
+      ToolName: r.name,
       Category: r.category,
-      Location: r.location_name,
+      Location: r.loc_name,
       TotalQuantity: r.quantity,
       Reserved: r.reserved_quantity,
       Available: r.quantity - r.reserved_quantity,
@@ -79,9 +80,9 @@ function StockLevelsTab() {
 
   const columns = [
     { header: "SKU", key: "sku", render: (r) => <span className="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-slate-600">{r.sku}</span> },
-    { header: "Tool Name", key: "tool_name", render: (r) => <span className="font-medium">{r.tool_name}</span> },
+    { header: "Tool Name", key: "name", render: (r) => <span className="font-medium">{r.name}</span> },
     { header: "Category", key: "category", render: (r) => <span className="text-slate-500 text-sm">{r.category}</span> },
-    { header: "Location", key: "location_name", render: (r) => <span className="text-slate-600 text-sm">{r.location_name}</span> },
+    { header: "Location", key: "loc_name", render: (r) => <span className="text-slate-600 text-sm">{r.loc_name}</span> },
     { header: "Total", key: "quantity", render: (r) => <span className="text-slate-500">{r.quantity}</span> },
     { header: "Reserved", key: "reserved_quantity", render: (r) => <span className="text-slate-500">{r.reserved_quantity}</span> },
     { header: "Available", key: "avail", render: (r) => {
@@ -142,7 +143,7 @@ function StockLevelsTab() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <DataTable columns={columns} data={filtered} isLoading={isLoading} searchKeys={["sku", "tool_name"]} emptyMessage="No stock data found." />
+        <DataTable columns={columns} data={filtered} isLoading={isLoading} searchKeys={["sku", "name"]} emptyMessage="No stock data found." />
       </div>
     </div>
   )
@@ -481,7 +482,8 @@ function CostAnalysisTab() {
 
 export function ReportsPage() {
   return (
-    <div className="flex flex-col gap-6 h-full min-h-[calc(100vh-6rem)]">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6 h-full min-h-[calc(100vh-6rem)]">
       <PageHeader title="Reports & Analytics" />
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex-1 flex flex-col">
@@ -504,5 +506,7 @@ export function ReportsPage() {
         </Tabs>
       </div>
     </div>
+
+    </ErrorBoundary>
   )
 }

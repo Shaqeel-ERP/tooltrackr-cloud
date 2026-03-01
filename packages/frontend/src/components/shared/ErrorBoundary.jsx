@@ -2,7 +2,7 @@ import * as React from "react"
 import { AlertTriangle } from "lucide-react"
 import { Button } from '@/components/ui/button';
 
-export class ErrorBoundary extends React.Component {
+export default class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null, expanded: false };

@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -248,7 +249,8 @@ export function UserManagement() {
   ]
 
   return (
-    <div className="flex flex-col gap-6 h-full">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6 h-full">
       <PageHeader 
         title="User Management" 
         actions={
@@ -270,5 +272,7 @@ export function UserManagement() {
 
       <UserModal isOpen={modalOpen} onClose={() => setModalOpen(false)} user={editingUser} currentUser={currentUser} />
     </div>
+  
+    </ErrorBoundary>
   )
 }

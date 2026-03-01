@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
 import { Plus, ExternalLink, Edit } from "lucide-react"
@@ -102,7 +103,8 @@ export function WorkersList() {
   ]
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader 
         title="Workers" 
         actions={isManager && (
@@ -130,5 +132,7 @@ export function WorkersList() {
         />
       </div>
     </div>
+  
+    </ErrorBoundary>
   )
 }

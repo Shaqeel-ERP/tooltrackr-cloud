@@ -1,0 +1,36 @@
+,[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 15 modules transformed.
+,[31mx[39m Build failed in 558ms
+[31merror during build:
+[31m[vite:esbuild] Transform failed with 2 errors:
+D:/ToolTrackr/tooltrackr-cloud/packages/frontend/src/pages/WorkerDetail.jsx:173:18: ERROR: Unexpected closing "div" tag does not match opening "ErrorBoundary" tag
+D:/ToolTrackr/tooltrackr-cloud/packages/frontend/src/pages/WorkerDetail.jsx:175:12: ERROR: Expected ")" but found "<"[31m
+file: [36mD:/ToolTrackr/tooltrackr-cloud/packages/frontend/src/pages/WorkerDetail.jsx:173:18[31m
+[33m
+[33mUnexpected closing "div" tag does not match opening "ErrorBoundary" tag[33m
+171|                      )
+172|                    })}
+173|                  </div>
+   |                    ^
+174|                )}
+175|              </TabsContent>
+
+[33mExpected ")" but found "<"[33m
+173|                  </div>
+174|                )}
+175|              </TabsContent>
+   |              ^
+176|  
+177|              <TabsContent value="history" className="m-0 h-full overflow-hidden flex flex-col">
+[31m
+    at failureErrorWithLog (D:\ToolTrackr\tooltrackr-cloud\packages\frontend\node_modules\esbuild\lib\main.js:1472:15)
+    at D:\ToolTrackr\tooltrackr-cloud\packages\frontend\node_modules\esbuild\lib\main.js:755:50
+    at responseCallbacks.<computed> (D:\ToolTrackr\tooltrackr-cloud\packages\frontend\node_modules\esbuild\lib\main.js:622:9)
+    at handleIncomingPacket (D:\ToolTrackr\tooltrackr-cloud\packages\frontend\node_modules\esbuild\lib\main.js:677:12)
+    at Socket.readFromStdout (D:\ToolTrackr\tooltrackr-cloud\packages\frontend\node_modules\esbuild\lib\main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m

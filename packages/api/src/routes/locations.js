@@ -4,7 +4,15 @@ const locations = new Hono();
 
 locations.get('/', async (c) => {
   const { results } = await c.env.DB.prepare(
-    `SELECT * FROM locations WHERE status='active' ORDER BY name`
+    `SELECT l.*,
+      COUNT(DISTINCT tl.tool_id) as total_tools,
+      SUM(tl.quantity) as total_quantity,
+      (SELECT COUNT(*) FROM transfers tr WHERE (tr.from_location_id=l.id OR tr.to_location_id=l.id) AND tr.status NOT IN ('completed','cancelled')) as active_transfers
+     FROM locations l
+     LEFT JOIN tool_locations tl ON tl.location_id=l.id
+     WHERE l.status='active'
+     GROUP BY l.id
+     ORDER BY l.name`
   ).all();
   return c.json(results);
 });
@@ -20,7 +28,9 @@ locations.get('/:id', async (c) => {
   ).bind(id).all();
   const { results: active_transfers } = await c.env.DB.prepare(
     `SELECT tr.*, t.name tool_name, t.sku, fl.name from_loc, tl.name to_loc
-     FROM transfers tr JOIN tools t ON t.id=tr.tool_id
+     FROM transfers tr
+     LEFT JOIN transfer_items ti ON ti.transfer_id = tr.id
+     JOIN tools t ON t.id=ti.tool_id
      JOIN locations fl ON fl.id=tr.from_location_id JOIN locations tl ON tl.id=tr.to_location_id
      WHERE (tr.from_location_id=? OR tr.to_location_id=?) AND tr.status NOT IN ('completed','cancelled')
      ORDER BY tr.created_at DESC`

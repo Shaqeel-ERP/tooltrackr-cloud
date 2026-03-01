@@ -1,8 +1,9 @@
+import * as React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import { AuthProvider, useAuth } from "@/lib/auth";
-import { AppLayout } from './components/layout/AppLayout';
+import { AppLayout } from "@/components/layout/AppLayout";
 import { LoginPage } from './pages/Login';
 import { NotAuthorized } from './pages/NotAuthorized';
 import { NotFoundPage } from './pages/NotFound';

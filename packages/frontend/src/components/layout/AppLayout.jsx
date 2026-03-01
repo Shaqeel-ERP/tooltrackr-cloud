@@ -164,10 +164,17 @@ export function AppLayout() {
   }, [location.pathname]);
 
   // Derive title from pathname (e.g. "/settings/users" -> "Users")
+  let pageTitle = 'Dashboard';
   const pathSegments = location.pathname.split('/').filter(Boolean);
-  const pageTitle = pathSegments.length > 0
-    ? pathSegments[pathSegments.length - 1].charAt(0).toUpperCase() + pathSegments[pathSegments.length - 1].slice(1)
-    : 'Dashboard';
+  if (pathSegments.length > 0) {
+    const last = pathSegments[pathSegments.length - 1];
+    if (!isNaN(last) && last.length > 0) {
+      const parent = pathSegments[pathSegments.length - 2];
+      pageTitle = parent ? parent.charAt(0).toUpperCase() + parent.slice(1) + ' Detail' : 'Detail';
+    } else {
+      pageTitle = last.charAt(0).toUpperCase() + last.slice(1);
+    }
+  }
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -183,7 +190,7 @@ export function AppLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex text-base">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans flex text-base">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-[240px] fixed inset-y-0 left-0 bg-slate-900 z-50 shadow-xl">
         {sidebarContent}
@@ -192,7 +199,7 @@ export function AppLayout() {
       {/* Main Content Area */}
       <div className="flex-1 md:ml-[240px] flex flex-col min-w-0">
         {/* Top Navbar */}
-        <header className="h-16 bg-white border-b border-slate-200 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40">
+        <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-4">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
@@ -204,10 +211,10 @@ export function AppLayout() {
                 {sidebarContent}
               </SheetContent>
             </Sheet>
-            <h2 className="text-lg font-semibold text-slate-800 capitalize">{pageTitle.replace('-', ' ')}</h2>
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 capitalize">{pageTitle.replace('-', ' ')}</h2>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={handleToggleTheme} className="text-slate-500 hover:text-slate-900 w-10 h-10 rounded-full">
+            <Button variant="ghost" size="icon" onClick={handleToggleTheme} className="text-slate-500 hover:text-slate-900 dark:hover:text-white w-10 h-10 rounded-full">
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
             {/* Future: Theme toggle, Notifications */}

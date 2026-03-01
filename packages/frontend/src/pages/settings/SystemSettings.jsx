@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useAuditLog } from "@/lib/queries"
 import { PageHeader } from "@/components/shared/PageHeader"
@@ -153,7 +154,8 @@ export function SystemSettings() {
   ]
 
   return (
-    <div className="flex flex-col gap-8 h-full min-h-[calc(100vh-6rem)] pb-8">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-8 h-full min-h-[calc(100vh-6rem)] pb-8">
       <PageHeader title="System Settings" />
 
       {/* SECTION 1: IMPORT DATA */}
@@ -233,5 +235,7 @@ export function SystemSettings() {
       </section>
 
     </div>
+  
+    </ErrorBoundary>
   )
 }

@@ -31,7 +31,7 @@ auth.post('/login', async (c) => {
     permissions: user.permissions,
     default_location_id: user.default_location_id,
     exp: Math.floor(Date.now() / 1000) + 86400 // 24h
-  }, c.env.JWT_SECRET);
+  }, c.env.JWT_SECRET, 'HS256');
 
   return c.json({
     token,

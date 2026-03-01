@@ -1,0 +1,11 @@
+﻿src/pages/Dashboard.jsx 1 0
+src/pages/Lending.jsx 1 0
+src/pages/Reports.jsx 1 0
+src/pages/Transfers.jsx 1 0
+src/pages/Workers.jsx 1 0
+src/pages/inventory/ToolDetail.jsx 1 0
+src/pages/inventory/ToolsList.jsx 1 0
+src/pages/procurement/Purchases.jsx 1 0
+src/pages/procurement/Suppliers.jsx 1 0
+src/pages/settings/SystemSettings.jsx 1 0
+src/pages/settings/UserManagement.jsx 1 0

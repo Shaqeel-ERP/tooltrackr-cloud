@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Combobox } from "@/components/ui/combobox"
 import { Loader2, Plus, Trash2 } from "lucide-react"
 import { useSuppliers, useTools, useLocations } from "@/lib/queries"
-import { useCreatePurchaseOrder } from "@/lib/mutations"
+import { useCreatePurchase } from "@/lib/mutations"
 
 const itemSchema = z.object({
   toolId: z.string().min(1, "Required"),
@@ -36,7 +36,7 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
   const { data: suppliers = [] } = useSuppliers()
   const { data: tools = [] } = useTools()
   const { data: locations = [] } = useLocations()
-  const { mutateAsync: createPO, isPending } = useCreatePurchaseOrder()
+  const { mutateAsync: createPO, isPending } = useCreatePurchase()
 
   const defaultDate = new Date().toISOString().split('T')[0]
 

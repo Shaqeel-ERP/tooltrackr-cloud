@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useParams, Link } from "react-router-dom"
 import { useLocationDetail } from "@/lib/queries"
@@ -50,10 +51,13 @@ export function LocationDetail() {
     }}
   ]
 
-  const hasTransfers = (location.active_transfers_in > 0 || location.active_transfers_out > 0)
+  const active_transfers_in = location.active_transfers?.filter(t => t.to_location_id === parseInt(id))?.length || 0;
+  const active_transfers_out = location.active_transfers?.filter(t => t.from_location_id === parseInt(id))?.length || 0;
+  const hasTransfers = (active_transfers_in > 0 || active_transfers_out > 0)
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader 
         title={location.name} 
         subtitle={location.address}
@@ -76,14 +80,14 @@ export function LocationDetail() {
              {location.active_transfers_in > 0 && (
                <div className="text-center px-4 py-2 bg-white rounded-lg shadow-sm border border-blue-100">
                  <span className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">In</span>
-                 <span className="font-bold text-lg text-slate-900">{location.active_transfers_in}</span>
+                  <span className="font-bold text-lg text-slate-900">{active_transfers_in}</span>
                  <span className="text-xs text-slate-500 ml-1">arriving</span>
                </div>
              )}
              {location.active_transfers_out > 0 && (
                <div className="text-center px-4 py-2 bg-white rounded-lg shadow-sm border border-blue-100">
                  <span className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Out</span>
-                 <span className="font-bold text-lg text-slate-900">{location.active_transfers_out}</span>
+                  <span className="font-bold text-lg text-slate-900">{active_transfers_out}</span>
                  <span className="text-xs text-slate-500 ml-1">leaving</span>
                </div>
              )}
@@ -117,5 +121,6 @@ export function LocationDetail() {
       </div>
 
     </div>
+    </ErrorBoundary>
   )
 }

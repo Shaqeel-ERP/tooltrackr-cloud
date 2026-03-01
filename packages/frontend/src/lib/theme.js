@@ -1,18 +1,20 @@
 export function getTheme() {
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('tt_theme');
+    const saved = localStorage.getItem('theme');
     if (saved) return saved;
-    // Optional: detect OS pref if desired, user asked defaults to 'light'
-    return 'light';
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersDark ? 'dark' : 'light';
   }
   return 'light';
 }
 
 export function setTheme(theme) {
   if (typeof window !== 'undefined') {
-    localStorage.setItem('tt_theme', theme);
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(theme);
+    const isDark = theme === 'dark';
+    localStorage.setItem('theme', theme);
+    const root = document.documentElement;
+    root.classList.toggle('dark', isDark);
+    if (!isDark) root.classList.remove('dark'); // Ensure it's off if light
   }
 }
 

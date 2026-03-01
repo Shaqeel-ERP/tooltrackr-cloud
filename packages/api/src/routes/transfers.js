@@ -5,11 +5,12 @@ const transfers = new Hono();
 transfers.get('/', async (c) => {
   const { results } = await c.env.DB.prepare(
     `SELECT tr.*, fl.name from_loc, tl.name to_loc,
-      t.name tool_name, t.sku
+      t.name tool_name, t.sku, ti.tool_id, ti.requested_quantity as quantity
      FROM transfers tr
      JOIN locations fl ON fl.id=tr.from_location_id
      JOIN locations tl ON tl.id=tr.to_location_id
-     JOIN tools t ON t.id=tr.tool_id
+     LEFT JOIN transfer_items ti ON ti.transfer_id = tr.id
+     LEFT JOIN tools t ON t.id=ti.tool_id
      ORDER BY tr.created_at DESC LIMIT 200`
   ).all();
   return c.json(results);
@@ -31,15 +32,19 @@ transfers.post('/', async (c) => {
 
   // Insert transfer as draft — no stock changes
   const r = await c.env.DB.prepare(
-    `INSERT INTO transfers (tool_id, quantity, from_location_id, to_location_id, status, requested_by, requested_at, notes, created_at, updated_at)
-     VALUES (?, ?, ?, ?, 'draft', ?, ?, ?, ?, ?)`
-  ).bind(b.toolId, b.quantity, b.fromLocationId, b.toLocationId,
-    user.username, now(), b.notes || '', now(), now()).run();
+    `INSERT INTO transfers (from_location_id, to_location_id, status, requested_by, transfer_date, notes, created_at)
+     VALUES (?, ?, 'draft', ?, ?, ?, ?)`
+  ).bind(b.fromLocationId, b.toLocationId, user.username, now(), b.notes || '', now()).run();
   const tid = r.meta.last_row_id;
+
+  // Insert transfer_items
+  await c.env.DB.prepare(
+    `INSERT INTO transfer_items (transfer_id, tool_id, requested_quantity) VALUES (?, ?, ?)`
+  ).bind(tid, b.toolId, b.quantity).run();
 
   const t = await c.env.DB.prepare("SELECT sku FROM tools WHERE id=?").bind(b.toolId).first('sku');
   await audit(c.env.DB, 'transfer_create', 'transfer', tid, user.username,
-    `Transfer request: ${b.quantity}x ${t?.sku} from loc ${b.fromLocationId} → ${b.toLocationId}`);
+    `Transfer request: ${b.quantity}x ${t || b.toolId} from loc ${b.fromLocationId} → ${b.toLocationId}`);
   return c.json({ ok: true, id: tid }, 201);
 });
 
@@ -48,7 +53,13 @@ transfers.post('/:id/approve', async (c) => {
   const user = c.get('jwtPayload');
 
   // 1. Fetch transfer
-  const tr = await c.env.DB.prepare(`SELECT * FROM transfers WHERE id=?`).bind(id).first();
+  const tr = await c.env.DB.prepare(`
+    SELECT tr.*, ti.tool_id, ti.requested_quantity as quantity
+    FROM transfers tr
+    LEFT JOIN transfer_items ti ON ti.transfer_id = tr.id
+    WHERE tr.id=?
+  `).bind(id).first();
+
   if (!tr) return c.json({ error: 'Transfer not found' }, 404);
   if (tr.status !== 'draft')
     return c.json({ error: `Cannot approve — transfer is already ${tr.status}` }, 400);
@@ -67,8 +78,8 @@ transfers.post('/:id/approve', async (c) => {
 
   // 4. Update status
   await c.env.DB.prepare(
-    `UPDATE transfers SET status='approved', approved_by=?, approved_at=?, updated_at=? WHERE id=?`
-  ).bind(user.username, now(), now(), id).run();
+    `UPDATE transfers SET status='approved', approved_by=? WHERE id=?`
+  ).bind(user.username, id).run();
 
   await audit(c.env.DB, 'transfer_approve', 'transfer', id, user.username,
     'Transfer approved — stock reserved at source');
@@ -79,7 +90,12 @@ transfers.post('/:id/complete', async (c) => {
   const id = parseInt(c.req.param('id'));
   const user = c.get('jwtPayload');
 
-  const tr = await c.env.DB.prepare(`SELECT * FROM transfers WHERE id=?`).bind(id).first();
+  const tr = await c.env.DB.prepare(`
+    SELECT tr.*, ti.tool_id, ti.requested_quantity as quantity, ti.id as ti_id
+    FROM transfers tr
+    LEFT JOIN transfer_items ti ON ti.transfer_id = tr.id
+    WHERE tr.id=?
+  `).bind(id).first();
   if (!tr) return c.json({ error: 'Not found' }, 404);
   if (tr.status === 'completed') return c.json({ error: 'Already completed' }, 400);
   if (tr.status !== 'approved')
@@ -105,20 +121,27 @@ transfers.post('/:id/complete', async (c) => {
     ).bind(tr.tool_id, tr.to_location_id, tr.quantity, now()).run();
   }
 
+  // Update transfer_items transferred_quantity
+  if (tr.ti_id) {
+    await c.env.DB.prepare(
+      `UPDATE transfer_items SET transferred_quantity=? WHERE id=?`
+    ).bind(tr.quantity, tr.ti_id).run();
+  }
+
   // Log both movements
   for (const [loc, type] of [
     [tr.from_location_id, 'transfer_out'],
     [tr.to_location_id,   'transfer_in']
   ]) {
     await c.env.DB.prepare(
-      `INSERT INTO stock_movements (tool_id, location_id, movement_type, quantity, reference_type, reference_id, performed_by, performed_at, timestamp)
-       VALUES (?, ?, ?, ?, 'transfer', ?, ?, ?, ?)`
-    ).bind(tr.tool_id, loc, type, tr.quantity, id, user.username, now(), now()).run();
+      `INSERT INTO stock_movements (tool_id, location_id, movement_type, quantity, reference_type, reference_id, performed_by, performed_at)
+       VALUES (?, ?, ?, ?, 'transfer', ?, ?, ?)`
+    ).bind(tr.tool_id, loc, type, tr.quantity, id, user.username, now()).run();
   }
 
   await c.env.DB.prepare(
-    `UPDATE transfers SET status='completed', transferred_by=?, transferred_at=?, received_by=?, received_at=?, updated_at=? WHERE id=?`
-  ).bind(user.username, now(), user.username, now(), now(), id).run();
+    `UPDATE transfers SET status='completed', completed_by=?, completed_at=? WHERE id=?`
+  ).bind(user.username, now(), id).run();
 
   await audit(c.env.DB, 'transfer_complete', 'transfer', id, user.username,
     'Transfer completed — stock physically moved');
@@ -129,7 +152,13 @@ transfers.delete('/:id', async (c) => {
   const id = parseInt(c.req.param('id'));
   const user = c.get('jwtPayload');
 
-  const tr = await c.env.DB.prepare(`SELECT * FROM transfers WHERE id=?`).bind(id).first();
+  const tr = await c.env.DB.prepare(`
+    SELECT tr.*, ti.tool_id, ti.requested_quantity as quantity 
+    FROM transfers tr
+    LEFT JOIN transfer_items ti ON ti.transfer_id = tr.id
+    WHERE tr.id=?
+  `).bind(id).first();
+
   if (!tr) return c.json({ error: 'Not found' }, 404);
   if (tr.status === 'completed')
     return c.json({ error: 'Cannot cancel a completed transfer' }, 400);
@@ -142,7 +171,7 @@ transfers.delete('/:id', async (c) => {
   }
 
   await c.env.DB.prepare(
-    `UPDATE transfers SET status='cancelled', updated_at=? WHERE id=?`
+    `UPDATE transfers SET status='cancelled', completed_at=? WHERE id=?`
   ).bind(now(), id).run();
 
   await audit(c.env.DB, 'transfer_cancel', 'transfer', id, user.username,

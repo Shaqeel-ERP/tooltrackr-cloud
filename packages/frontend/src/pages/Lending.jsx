@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useSearchParams, Link } from "react-router-dom"
 import { PageHeader } from "@/components/shared/PageHeader"
@@ -190,7 +191,8 @@ export function Lending() {
   ]
 
   return (
-    <div className="flex flex-col gap-6">
+    <ErrorBoundary>
+      <div className="flex flex-col gap-6">
       <PageHeader 
         title="Tool Lending" 
         actions={
@@ -286,5 +288,7 @@ export function Lending() {
       <IssueToolModal isOpen={isIssueOpen} onClose={() => setIsIssueOpen(false)} />
       <ReturnToolModal isOpen={!!returnLoan} onClose={() => setReturnLoan(null)} loan={returnLoan} />
     </div>
+  
+    </ErrorBoundary>
   )
 }
