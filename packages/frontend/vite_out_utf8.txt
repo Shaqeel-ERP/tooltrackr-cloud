@@ -1,0 +1,69 @@
+﻿[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 2064 modules transformed.
+node.exe : [31mx[39m Build failed in 
+2.27s
+At C:\Program Files\nodejs\npx.ps1:29 
+char:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecifie 
+   d: ([31mx[39m Build failed in 2.27s  
+  :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeComma 
+   ndError
+ 
+[31merror during build:
+[31msrc/components/reports/StockLevelsTab
+.jsx (8:9): "exportCSV" is not exported 
+by "src/lib/utils.js", imported by "src/co
+mponents/reports/StockLevelsTab.jsx".[31m
+file: [36mD:/ToolTrackr/tooltrackr-cloud/
+packages/frontend/src/components/reports/S
+tockLevelsTab.jsx:8:9[31m
+[33m
+6: import { Button } from 
+'@/components/ui/button';
+7: import { AlertCircle, TrendingUp, 
+CheckCircle2, Download } from 
+'lucide-react';
+8: import { exportCSV } from 
+'@/lib/utils';
+            ^
+9: import { cn } from '@/lib/utils';
+[31m
+    at getRollupError (file:///D:/ToolTrac
+kr/tooltrackr-cloud/node_modules/rollup/di
+st/es/shared/parseAst.js:402:41)
+    at error (file:///D:/ToolTrackr/tooltr
+ackr-cloud/node_modules/rollup/dist/es/sha
+red/parseAst.js:398:42)
+    at Module.error (file:///D:/ToolTrackr
+/tooltrackr-cloud/node_modules/rollup/dist
+/es/shared/node-entry.js:17040:16)
+    at Module.traceVariable (file:///D:/To
+olTrackr/tooltrackr-cloud/node_modules/rol
+lup/dist/es/shared/node-entry.js:17452:29)
+    at ModuleScope.findVariable (file:///D
+:/ToolTrackr/tooltrackr-cloud/node_modules
+/rollup/dist/es/shared/node-entry.js:15070
+:39)
+    at FunctionScope.findVariable (file://
+/D:/ToolTrackr/tooltrackr-cloud/node_modul
+es/rollup/dist/es/shared/node-entry.js:567
+3:38)
+    at FunctionBodyScope.findVariable (fil
+e:///D:/ToolTrackr/tooltrackr-cloud/node_m
+odules/rollup/dist/es/shared/node-entry.js
+:5673:38)
+    at ReturnValueScope.findVariable (file
+:///D:/ToolTrackr/tooltrackr-cloud/node_mo
+dules/rollup/dist/es/shared/node-entry.js:
+5673:38)
+    at FunctionBodyScope.findVariable (fil
+e:///D:/ToolTrackr/tooltrackr-cloud/node_m
+odules/rollup/dist/es/shared/node-entry.js
+:5673:38)
+    at Identifier.bind (file:///D:/ToolTra
+ckr/tooltrackr-cloud/node_modules/rollup/d
+ist/es/shared/node-entry.js:5447:40)[39m

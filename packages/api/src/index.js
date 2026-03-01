@@ -15,6 +15,7 @@ import analyticsRoutes from './routes/analytics.js';
 import auditRoutes     from './routes/audit.js';
 import importRoutes    from './routes/import.js';
 import userRoutes      from './routes/users.js';
+import reportsRoutes from './routes/reports.js';
 
 const app = new Hono();
 
@@ -44,6 +45,7 @@ app.route('/api/analytics',  analyticsRoutes);
 app.route('/api/audit',      auditRoutes);
 app.route('/api/import',     importRoutes);
 app.route('/api/users',      userRoutes);
+app.route('/api/reports', reportsRoutes);
 
 app.notFound((c) => c.json({ error: 'Not found' }, 404));
 app.onError((err, c) => { console.error(err); return c.json({ error: err.message }, 500); });

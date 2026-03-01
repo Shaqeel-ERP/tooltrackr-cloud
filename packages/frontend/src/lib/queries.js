@@ -130,16 +130,48 @@ export function useAuditLog(filters = {}) {
 
 export function useStockReport() {
   return useQuery({
-    queryKey: ['stockReport'],
-    queryFn: () => api.get('/api/analytics/stock-report').then((r) => r.data),
+    queryKey: ['reports', 'stock'],
+    queryFn: () => api.get('/api/reports/stock-levels').then((r) => r.data),
     staleTime: STALE_TIME,
   });
 }
 
 export function useWorkerHoldings() {
   return useQuery({
-    queryKey: ['workerHoldings'],
-    queryFn: () => api.get('/api/analytics/worker-holdings').then((r) => r.data),
+    queryKey: ['reports', 'loans'],
+    queryFn: () => api.get('/api/reports/worker-holdings').then((r) => r.data),
+    staleTime: STALE_TIME,
+  });
+}
+
+export function useLoanHistoryReport(filters = {}) {
+  return useQuery({
+    queryKey: ['reports', 'loan-history', filters],
+    queryFn: () => api.get('/api/reports/loan-history', { params: filters }).then((r) => r.data),
+    staleTime: STALE_TIME,
+  });
+}
+
+export function useMovementsReport(filters = {}) {
+  return useQuery({
+    queryKey: ['reports', 'movements', filters],
+    queryFn: () => api.get('/api/reports/movements', { params: filters }).then((r) => r.data),
+    staleTime: STALE_TIME,
+  });
+}
+
+export function useTransfersReport(filters = {}) {
+  return useQuery({
+    queryKey: ['reports', 'transfers', filters],
+    queryFn: () => api.get('/api/reports/transfers', { params: filters }).then((r) => r.data),
+    staleTime: STALE_TIME,
+  });
+}
+
+export function useCostAnalysisReport() {
+  return useQuery({
+    queryKey: ['reports', 'cost'],
+    queryFn: () => api.get('/api/reports/cost-analysis').then((r) => r.data),
     staleTime: STALE_TIME,
   });
 }
