@@ -62,7 +62,7 @@ export function ReturnToolModal({ isOpen, onClose, loan }) {
 
   if (!loan) return null
 
-  const daysOut = Math.floor((Date.now() - new Date(loan.date_out).getTime()) / 86400000)
+  const daysOut = loan.date_out ? Math.floor((Date.now() - new Date(loan.date_out).getTime()) / 86400000) : 0
   const isOverdue = new Date(loan.expected_return_date).getTime() < Date.now()
   const daysOverdue = Math.floor((Date.now() - new Date(loan.expected_return_date).getTime()) / 86400000)
 
@@ -74,11 +74,11 @@ export function ReturnToolModal({ isOpen, onClose, loan }) {
         </DialogHeader>
 
         {/* LOAN SUMMARY CARD */}
-        <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 grid grid-cols-2 gap-y-3 gap-x-4 mb-2">
+        <div className="bg-muted dark:bg-slate-800/50 border border-border rounded-lg p-4 grid grid-cols-2 gap-y-3 gap-x-4 mb-2">
           <div className="col-span-2 flex justify-between items-start">
             <div>
-              <p className="font-semibold text-slate-900">{loan.tool_name}</p>
-              <Badge variant="outline" className="font-mono text-[10px] mt-1 bg-white">{loan.sku}</Badge>
+              <p className="font-semibold text-foreground">{loan.tool_name}</p>
+              <Badge variant="outline" className="font-mono text-[10px] mt-1 bg-background">{loan.sku}</Badge>
             </div>
             <div className="text-right">
               <span className="text-xs text-slate-500 font-medium">Qty</span>
@@ -87,18 +87,18 @@ export function ReturnToolModal({ isOpen, onClose, loan }) {
           </div>
 
           <div>
-            <span className="text-xs text-slate-500 block mb-0.5">Worker</span>
-            <span className="text-sm font-medium">{loan.worker_name}</span>
+            <span className="text-xs text-muted-foreground block mb-0.5">Worker</span>
+            <span className="text-sm font-medium text-foreground">{loan.worker_name || loan.worker?.name || 'Unknown'}</span>
           </div>
 
           <div>
-            <span className="text-xs text-slate-500 block mb-0.5">Days Out</span>
-            <span className="text-sm font-medium">{daysOut} days</span>
+            <span className="text-xs text-muted-foreground block mb-0.5">Days Out</span>
+            <span className="text-sm font-medium text-foreground">{daysOut} days</span>
           </div>
 
           <div>
-            <span className="text-xs text-slate-500 block mb-0.5">Issued</span>
-            <span className="text-sm">{new Date(loan.date_out).toLocaleDateString()}</span>
+            <span className="text-xs text-muted-foreground block mb-0.5">Issued</span>
+            <span className="text-sm text-foreground">{loan.date_out ? new Date(loan.date_out).toLocaleDateString() : '—'}</span>
           </div>
 
           <div>

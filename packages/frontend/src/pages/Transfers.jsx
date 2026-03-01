@@ -144,9 +144,9 @@ export function TransfersPage() {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start pb-6">
         
         {/* COL 1: PENDING (DRAFT) */}
-        <div className="bg-slate-100 rounded-xl border border-border p-4 flex flex-col h-full max-h-min lg:max-h-full min-h-[400px]">
+          <div className="bg-card rounded-xl border border-border p-4 flex flex-col h-full max-h-min lg:max-h-full min-h-[400px]">
           <div className="flex items-center justify-between mb-4 px-1">
-             <h2 className="font-bold text-slate-700 flex items-center gap-2">
+              <h2 className="font-bold text-foreground flex items-center gap-2">
                <span className="text-xl">📋</span> Pending Approval
              </h2>
              <Badge variant="secondary" className="bg-slate-200 text-slate-700 font-bold">{draft.length}</Badge>
@@ -163,9 +163,9 @@ export function TransfersPage() {
         </div>
 
         {/* COL 2: APPROVED / IN TRANSIT */}
-        <div className="bg-blue-50 rounded-xl border border-blue-100 p-4 flex flex-col h-full max-h-min lg:max-h-full min-h-[400px]">
+          <div className="bg-card rounded-xl border border-border p-4 flex flex-col h-full max-h-min lg:max-h-full min-h-[400px]">
           <div className="flex items-center justify-between mb-4 px-1">
-             <h2 className="font-bold text-blue-800 flex items-center gap-2">
+              <h2 className="font-bold text-blue-600 flex items-center gap-2">
                <span className="text-xl">✅</span> In Transit
              </h2>
              <Badge variant="secondary" className="bg-blue-200 text-blue-800 font-bold">{approved.length}</Badge>
@@ -182,9 +182,9 @@ export function TransfersPage() {
         </div>
 
         {/* COL 3: COMPLETED */}
-        <div className="bg-emerald-50 rounded-xl border border-emerald-100 p-4 flex flex-col h-full max-h-min lg:max-h-full min-h-[400px]">
+          <div className="bg-card rounded-xl border border-border p-4 flex flex-col h-full max-h-min lg:max-h-full min-h-[400px]">
           <div className="flex items-center justify-between mb-4 px-1">
-             <h2 className="font-bold text-emerald-800 flex items-center gap-2">
+              <h2 className="font-bold text-emerald-600 flex items-center gap-2">
                <span className="text-xl">✓</span> Completed
              </h2>
              <Badge variant="secondary" className="bg-emerald-200 text-emerald-800 font-bold">{completed.length}</Badge>

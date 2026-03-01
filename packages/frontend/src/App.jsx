@@ -70,6 +70,7 @@ export default function App() {
 
             <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
               <Route path="/" element={<React.Suspense fallback={<PageSkeleton />}><Dashboard /></React.Suspense>} />
+              <Route path="/dashboard" element={<Navigate to="/" replace />} />
               <Route path="/inventory" element={<React.Suspense fallback={<PageSkeleton />}><ToolsList /></React.Suspense>} />
               <Route path="/inventory/:id" element={<React.Suspense fallback={<PageSkeleton />}><ToolDetail /></React.Suspense>} />
               <Route path="/locations" element={<React.Suspense fallback={<PageSkeleton />}><LocationsList /></React.Suspense>} />

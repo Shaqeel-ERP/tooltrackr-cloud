@@ -237,7 +237,16 @@ export function Dashboard() {
          </div>
       </div>
 
-      <StockAdjustmentModal isOpen={!!adjustItem} onClose={() => setAdjustItem(null)} item={adjustItem} />
+        {adjustItem && (
+          <StockAdjustmentModal
+            isOpen={true}
+            onClose={() => setAdjustItem(null)}
+            tool={{ id: adjustItem.tool_id, name: adjustItem.name, sku: adjustItem.sku }}
+            locationId={adjustItem.location_id}
+            locationName={adjustItem.loc_name}
+            currentStock={adjustItem.quantity}
+          />
+        )}
       <ReturnToolModal isOpen={!!returnLoan} onClose={() => setReturnLoan(null)} loan={returnLoan} />
     </div>
     </ErrorBoundary>

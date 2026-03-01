@@ -1,13 +1,15 @@
 import ErrorBoundary from "@/components/shared/ErrorBoundary"
 import * as React from "react"
 import { useNavigate } from "react-router-dom"
-import { Plus, MapPin, User, Package, Wrench, ArrowRightLeft, ExternalLink } from "lucide-react"
+import { Plus, MapPin, User, Package, Wrench, ArrowRightLeft, ExternalLink, MoreVertical, Edit, Trash2 } from "lucide-react"
 import { useLocations } from "@/lib/queries"
 import { useAuth } from "@/lib/auth"
 import { PageHeader } from "@/components/shared/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { LocationModal } from "@/components/locations/LocationModal"
 import { cn } from "@/lib/utils"
 
 function StatBox({ icon: Icon, label, value }) {
@@ -28,13 +30,26 @@ export function LocationsList() {
   const isAdmin = hasRole('Admin')
   const { data: locations, isLoading } = useLocations()
 
+  const [modalOpen, setModalOpen] = React.useState(false)
+  const [editingLocation, setEditingLocation] = React.useState(null)
+
+  const handleAdd = () => {
+    setEditingLocation(null)
+    setModalOpen(true)
+  }
+
+  const handleEdit = (loc) => {
+    setEditingLocation(loc)
+    setModalOpen(true)
+  }
+
   return (
     <ErrorBoundary>
       <div className="flex flex-col gap-6">
       <PageHeader 
         title="Locations" 
         actions={isAdmin && (
-          <Button onClick={() => {}} className="gap-2">
+          <Button onClick={handleAdd} className="gap-2">
             <Plus className="h-4 w-4" /> Add Location
           </Button>
         )}
@@ -51,14 +66,30 @@ export function LocationsList() {
                <div className="p-5 border-b border-border flex-1">
                  <div className="flex justify-between items-start mb-2">
                    <h3 className="font-bold text-lg text-foreground leading-tight">{loc.name}</h3>
-                   <Badge variant="outline" className={cn(
-                     "uppercase text-[10px] font-bold tracking-wider",
-                     loc.type === 'warehouse' ? "bg-indigo-50 text-indigo-700 border-indigo-200" :
-                     loc.type === 'site' ? "bg-amber-50 text-amber-700 border-amber-200" :
-                     "bg-muted text-slate-700 border-border"
-                   )}>
-                     {loc.type}
-                   </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className={cn(
+                      "uppercase text-[10px] font-bold tracking-wider",
+                      loc.type === 'warehouse' ? "bg-indigo-50 text-indigo-700 border-indigo-200" :
+                        loc.type === 'site' ? "bg-amber-50 text-amber-700 border-amber-200" :
+                          "bg-muted text-slate-700 border-border"
+                    )}>
+                      {loc.type}
+                    </Badge>
+                    {isAdmin && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-6 w-6">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="z-50">
+                          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleEdit(loc); }}>
+                            <Edit className="h-4 w-4 mr-2" /> Edit Location
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
                  </div>
 
                  {loc.address && (
@@ -97,6 +128,7 @@ export function LocationsList() {
         </div>
       )}
     </div>
+      <LocationModal isOpen={modalOpen} onClose={() => setModalOpen(false)} location={editingLocation} />
     </ErrorBoundary>
   )
 }

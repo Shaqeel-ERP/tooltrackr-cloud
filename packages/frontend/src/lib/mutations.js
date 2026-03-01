@@ -131,3 +131,13 @@ export function useImportCSV(type) {
   const queryClient = useQueryClient();
   return useMutation(createMutationProps(queryClient, (formData) => api.post(`/api/import?type=${type}`, formData), 'Data imported successfully', ['tools', 'workers', 'locations']));
 }
+
+export function useAddLocation() {
+  const queryClient = useQueryClient();
+  return useMutation(createMutationProps(queryClient, (data) => api.post('/api/locations', data), 'Location added successfully', ['locations']));
+}
+
+export function useUpdateLocation() {
+  const queryClient = useQueryClient();
+  return useMutation(createMutationProps(queryClient, ({ id, ...data }) => api.put(`/api/locations/${id}`, data), 'Location updated successfully', ['locations']));
+}

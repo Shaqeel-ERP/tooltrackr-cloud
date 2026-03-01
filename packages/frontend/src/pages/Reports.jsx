@@ -202,18 +202,18 @@ function WorkerHoldingsTab() {
                 >
                   <div className="flex items-center gap-4">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-foreground text-lg">{worker.worker_name}</span>
+                      <span className="font-semibold text-foreground text-lg">{worker.worker_name || worker.name || worker.phone}</span>
                       <span className="text-xs text-muted-foreground">{worker.phone} {worker.company ? `· ${worker.company}` : ''}</span>
                     </div>
                     <div className="flex items-center gap-2 ml-4">
-                      <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 font-bold">{(worker.loans || []).length} Items</Badge>
+                      <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 font-bold">{(worker.active_loans || worker.loans || []).length} Items</Badge>
                       <Badge variant="outline" className={cn(
                         "text-[10px] uppercase font-bold",
                         worker.reliability_score >= 80 ? "bg-green-50 text-green-700 border-green-200" :
                         worker.reliability_score >= 50 ? "bg-amber-50 text-amber-700 border-amber-200" :
                         "bg-red-50 text-red-700 border-red-200"
                       )}>
-                         {worker.reliability_score !== null ? `${Math.round(worker.reliability_score)}% Rel` : 'New'}
+                        {worker.reliability_score !== null && !isNaN(worker.reliability_score) ? `${Math.round(worker.reliability_score)}% Rel` : 'New'}
                       </Badge>
                     </div>
                   </div>
@@ -363,7 +363,7 @@ function CostAnalysisTab() {
   // Calc summaries
   const totalSpend = purchases.reduce((acc, p) => acc + Number(p.total_amount || 0), 0)
   const totalTax = purchases.reduce((acc, p) => acc + Number(p.tax_amount || 0), 0)
-  const totalItems = purchases.reduce((acc, p) => acc + (p.items || []).reduce((sum, item) => sum + item.quantity_received, 0), 0)
+  const totalItems = purchases.reduce((acc, p) => acc + (p.items?.length || 0), 0)
 
   // Group by supplier
   const supplierStats = React.useMemo(() => {
@@ -442,7 +442,7 @@ function CostAnalysisTab() {
                     <td className="px-4 py-3 text-right font-bold text-foreground">AED {s.spend.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
                   </tr>
                 ))}
-                {supplierStats.length === 0 && <tr><td colSpan="3" className="p-4 text-center text-slate-400">No purchase data.</td></tr>}
+                {supplierStats.length === 0 && <tr><td colSpan="3" className="p-4 text-center text-muted-foreground">No purchase data.</td></tr>}
               </tbody>
             </table>
           </div>
@@ -470,7 +470,7 @@ function CostAnalysisTab() {
                     <td className="px-4 py-3 text-right font-bold text-foreground">AED {c.cost.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
                   </tr>
                 ))}
-                {categoryStats.length === 0 && <tr><td colSpan="3" className="p-4 text-center text-slate-400">No purchase data.</td></tr>}
+                {categoryStats.length === 0 && <tr><td colSpan="3" className="p-4 text-center text-muted-foreground">No purchase data.</td></tr>}
               </tbody>
             </table>
           </div>

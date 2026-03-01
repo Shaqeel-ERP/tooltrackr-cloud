@@ -43,7 +43,9 @@ analytics.get('/stock-report', async (c) => {
 
 analytics.get('/worker-holdings', async (c) => {
   const { results } = await c.env.DB.prepare(
-    `SELECT w.id, w.name, w.phone, w.worker_type,
+    `SELECT w.id worker_id, w.name worker_name, w.phone, w.company, w.worker_type,
+      (SELECT COUNT(*) FROM lending WHERE worker_id=w.id AND status='completed') returned_loans,
+      (SELECT COUNT(*) FROM lending WHERE worker_id=w.id) total_loans,
       t.sku, t.name tool_name, t.category, l.name loc_name,
       ld.quantity, ld.date_out, ld.expected_return_date, ld.id loan_id,
       CASE WHEN ld.expected_return_date < ? AND ld.actual_return_date IS NULL THEN 1 ELSE 0 END overdue
@@ -51,7 +53,35 @@ analytics.get('/worker-holdings', async (c) => {
      JOIN workers w ON w.id=ld.worker_id JOIN tools t ON t.id=ld.tool_id JOIN locations l ON l.id=ld.location_id
      WHERE ld.actual_return_date IS NULL AND ld.status='active' ORDER BY w.name, t.name`
   ).bind(Date.now()).all();
-  return c.json(results);
+
+  const workersMap = {};
+  results.forEach(r => {
+    if (!workersMap[r.worker_id]) {
+      const total = r.total_loans || 0;
+      const rel = total > 0 ? (r.returned_loans / total) * 100 : null;
+      workersMap[r.worker_id] = {
+        worker_id: r.worker_id,
+        worker_name: r.worker_name,
+        phone: r.phone,
+        company: r.company || '',
+        reliability_score: rel,
+        loans: []
+      };
+    }
+    workersMap[r.worker_id].loans.push({
+      id: r.loan_id,
+      sku: r.sku,
+      tool_name: r.tool_name,
+      category: r.category,
+      loc_name: r.loc_name,
+      quantity: r.quantity,
+      date_out: r.date_out,
+      expected_return_date: r.expected_return_date,
+      overdue: r.overdue
+    });
+  });
+
+  return c.json(Object.values(workersMap));
 });
 
 function now() { return Date.now(); }

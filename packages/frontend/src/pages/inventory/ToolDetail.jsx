@@ -35,7 +35,9 @@ function timeAgo(dateString) {
 
 export function ToolDetail() {
   const { id } = useParams()
-  const { data: tool, isLoading, error } = useToolDetail(id)
+  const toolId = Number(id)
+  const { data, isPending, isLoading, error } = useToolDetail(id)
+  const tool = data?.tool ?? data
   const { hasRole } = useAuth()
   const isManager = hasRole('Manager')
   

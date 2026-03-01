@@ -99,7 +99,7 @@ function SidebarNav({ dashboardData, closeMenu }) {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
                       ? 'bg-blue-600 text-white'
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-foreground dark:hover:text-white'
                     }`
                   }
                 >
@@ -126,17 +126,17 @@ function UserCard({ user, logout }) {
   };
 
   return (
-    <div className="p-4 border-t border-slate-800 flex items-center gap-3">
+    <div className="p-4 border-t border-border dark:border-slate-800 flex items-center gap-3">
       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white ${roleColors[user.role] || roleColors.User}`}>
         {initals}
       </div>
       <div className="flex-1 overflow-hidden pointer-events-none">
-        <p className="text-sm font-medium text-white truncate">{user.name}</p>
-        <p className="text-xs text-slate-400 truncate">{user.role}</p>
+        <p className="text-sm font-medium text-foreground dark:text-white truncate">{user.name}</p>
+        <p className="text-xs text-muted-foreground dark:text-slate-400 truncate">{user.role}</p>
       </div>
       <button
         onClick={logout}
-        className="text-slate-400 hover:text-white transition-colors p-1 rounded-md hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400"
+        className="text-slate-400 hover:text-foreground dark:hover:text-white transition-colors p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400"
         title="Logout"
       >
         <LogOut className="w-4 h-4" />
@@ -178,11 +178,11 @@ export function AppLayout() {
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-2 px-6 py-5 border-b border-slate-800">
+      <div className="flex items-center gap-2 px-6 py-5 border-b border-border dark:border-slate-800">
         <div className="bg-blue-600 p-1.5 rounded-lg text-white">
           <Wrench className="w-5 h-5" />
         </div>
-        <span className="text-lg font-bold text-white tracking-tight">ToolTrackr</span>
+        <span className="text-lg font-bold text-foreground dark:text-white tracking-tight">ToolTrackr</span>
       </div>
       <SidebarNav dashboardData={dashboardData} closeMenu={() => setMobileMenuOpen(false)} />
       <UserCard user={user} logout={logout} />
@@ -192,7 +192,7 @@ export function AppLayout() {
   return (
     <div className="min-h-screen bg-muted text-foreground dark:bg-slate-950 dark:text-slate-100 font-sans flex text-base">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-[240px] fixed inset-y-0 left-0 bg-slate-900 z-50 shadow-xl">
+      <aside className="hidden md:flex flex-col w-[240px] fixed inset-y-0 left-0 bg-background dark:bg-slate-900 border-r border-border shadow-xl transition-colors duration-200 z-50">
         {sidebarContent}
       </aside>
 

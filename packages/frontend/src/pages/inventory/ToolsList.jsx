@@ -110,34 +110,21 @@ export function ToolsList() {
     },
     {
       header: "Stock",
-      key: "total_quantity",
+      key: "total_stock",
       sortable: false,
       render: (tool) => {
-        const stocks = tool.stock_by_location || []
-        if (stocks.length === 0) return <span className="text-slate-400 text-xs">No stock data</span>
+        if (tool.total_stock == null) return <span className="text-slate-400 text-xs">No stock data</span>
         return (
-          <div className="flex flex-wrap gap-1.5">
-            {stocks.map(s => {
-               const qty = s.quantity || 0
-               const min = tool.min_stock_level || 0
-               let color = "bg-green-100 text-green-700 border-green-200"
-               if (qty === 0) color = "bg-red-100 text-red-700 border-red-200"
-               else if (qty <= min) color = "bg-amber-100 text-amber-700 border-amber-200"
-               
-               return (
-                 <span key={s.location_id} className={`px-2 py-0.5 text-[11px] font-semibold border rounded-sm ${color}`}>
-                   {s.name}: {qty}
-                 </span>
-               )
-            })}
-          </div>
+          <span className="font-semibold text-foreground">
+            {tool.total_stock}
+          </span>
         )
       },
     },
     {
       header: "Min Level",
       key: "min_stock_level",
-      render: (tool) => <span className="text-slate-700">{tool.min_stock_level || 0}</span>,
+      render: (tool) => <span className="text-foreground">{tool.min_stock_level || 0}</span>,
     },
     {
       header: "Actions",

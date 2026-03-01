@@ -20,7 +20,7 @@ export function Combobox({ value, onValueChange, options = [], placeholder = "Se
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between font-normal bg-white h-auto py-2 text-left"
+          className="w-full justify-between font-normal bg-background h-auto py-2 text-left"
         >
           <span className="truncate flex-1">
             {value && options.find((o) => String(o.value) === String(value))?.renderLabel

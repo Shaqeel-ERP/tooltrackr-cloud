@@ -134,8 +134,8 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           
           {/* SECTION 1: DETAILS */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
-            <h3 className="font-semibold text-slate-800 border-b border-slate-200 pb-2">Order Details</h3>
+          <div className="bg-card dark:bg-slate-800 p-4 rounded-xl border border-border space-y-4">
+            <h3 className="font-semibold text-foreground border-b border-border pb-2">Order Details</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -180,7 +180,7 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
           {/* SECTION 2: LINE ITEMS */}
           <div className="space-y-4">
              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-slate-800">Line Items</h3>
+              <h3 className="font-semibold text-foreground">Line Items</h3>
                 <Button type="button" variant="outline" size="sm" onClick={() => append({ toolId: "", locationId: "", quantity: 1, unitPrice: 0 })} className="h-8 gap-1">
                    <Plus className="w-3.5 h-3.5" /> Add Item
                 </Button>
@@ -195,7 +195,7 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
                  const lineTotal = currentQty * currentPrice
 
                  return (
-                   <div key={field.id} className="flex flex-col md:flex-row gap-3 bg-white p-3 rounded-lg border border-slate-200 items-start md:items-end">
+                   <div key={field.id} className="flex flex-col md:flex-row gap-3 bg-card dark:bg-slate-800 p-3 rounded-lg border border-border items-start md:items-end">
                      
                      <div className="flex-1 w-full space-y-1">
                         {index === 0 && <Label className="text-xs text-slate-500 hidden md:block">Tool Item</Label>}
@@ -248,8 +248,8 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
                        </div>
                        
                        <div className="w-24 space-y-1 flex flex-col justify-end h-10">
-                          {index === 0 && <Label className="text-xs text-slate-500 hidden md:block">Total</Label>}
-                          <div className="text-sm font-semibold text-slate-700 bg-slate-50 border border-slate-100 h-10 rounded-md px-3 flex items-center justify-end">
+                         {index === 0 && <Label className="text-xs text-muted-foreground hidden md:block">Total</Label>}
+                         <div className="text-sm font-semibold text-foreground bg-muted border border-border h-10 rounded-md px-3 flex items-center justify-end">
                             {lineTotal.toFixed(2)}
                           </div>
                        </div>
@@ -296,7 +296,7 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
                  </div>
               </div>
 
-              <div className="flex justify-between items-center text-lg font-bold text-slate-900 bg-slate-100 p-3 rounded-lg border border-slate-200 mt-2">
+              <div className="flex justify-between items-center text-lg font-bold text-foreground bg-muted p-3 rounded-lg border border-border mt-2">
                  <span>TOTAL:</span>
                  <span>AED {Math.max(0, total).toFixed(2)}</span>
               </div>

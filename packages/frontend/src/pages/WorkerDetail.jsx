@@ -12,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { ReturnToolModal } from "@/components/lending/ReturnToolModal"
 import { DataTable } from "@/components/shared/DataTable"
+import { WorkerModal } from "@/components/workers/WorkerModal"
 import { cn } from "@/lib/utils"
 
 function InfoItem({ icon: Icon, label, value }) {
@@ -43,6 +44,7 @@ export function WorkerDetail() {
   const isManager = hasRole('Manager')
 
   const [returnLoan, setReturnLoan] = React.useState(null)
+  const [modalOpen, setModalOpen] = React.useState(false)
 
   if (isLoading) {
     return <div className="space-y-6 animate-pulse">
@@ -102,7 +104,7 @@ export function WorkerDetail() {
         subtitle={`${worker.worker_type} ${worker.company ? `· ${worker.company}` : ''}`}
         backTo="/workers"
         actions={isManager && (
-          <Button variant="outline" onClick={() => {}} className="gap-2">
+          <Button variant="outline" onClick={() => setModalOpen(true)} className="gap-2">
             <Edit className="h-4 w-4" /> Edit
           </Button>
         )}
@@ -197,6 +199,7 @@ export function WorkerDetail() {
       </div>
 
       <ReturnToolModal isOpen={!!returnLoan} onClose={() => setReturnLoan(null)} loan={returnLoan} />
+        <WorkerModal isOpen={modalOpen} onClose={() => setModalOpen(false)} worker={worker} />
     </div>
     </ErrorBoundary>
   )
