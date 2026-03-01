@@ -9,8 +9,8 @@ import { useDashboard } from "@/lib/queries";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { Button } from "@/components/ui/button";
-import { StockAdjustmentModal } from '../components/inventory/StockAdjustmentModal';
-import { ReturnToolModal } from '../components/lending/ReturnToolModal';
+import { StockAdjustmentModal } from "@/components/inventory/StockAdjustmentModal";
+import { ReturnToolModal } from "@/components/lending/ReturnToolModal";
 
 const todayFormatted = new Date().toLocaleDateString('en-GB', {
   weekday: 'long',

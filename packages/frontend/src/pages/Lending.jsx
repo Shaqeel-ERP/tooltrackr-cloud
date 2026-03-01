@@ -8,8 +8,8 @@ import { DataTable } from "@/components/shared/DataTable"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { Plus, MapPin, Calendar, Phone, RotateCcw } from "lucide-react"
 import { useLending } from "@/lib/queries"
-import { IssueToolModal } from "../components/lending/IssueToolModal"
-import { ReturnToolModal } from "../components/lending/ReturnToolModal"
+import { IssueToolModal } from "@/components/lending/IssueToolModal"
+import { ReturnToolModal } from "@/components/lending/ReturnToolModal"
 import { cn } from "@/lib/utils"
 
 function getInitials(name) {

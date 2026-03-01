@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
-import { ToolFormDialog } from "../../components/inventory/ToolFormDialog"
-import { StockAdjustmentModal } from "../../components/inventory/StockAdjustmentModal"
-import { MaintenanceModal } from "../../components/inventory/MaintenanceModal"
+import { ToolFormDialog } from "@/components/inventory/ToolFormDialog"
+import { StockAdjustmentModal } from "@/components/inventory/StockAdjustmentModal"
+import { MaintenanceModal } from "@/components/inventory/MaintenanceModal"
 
 export function ToolsList() {
   const navigate = useNavigate()
