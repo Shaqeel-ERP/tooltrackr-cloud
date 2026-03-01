@@ -17,9 +17,9 @@ import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
 
 function InfoField({ label, value, render }) {
   return (
-    <div className="flex flex-col gap-1 border border-slate-100 rounded-lg p-3 bg-slate-50/50">
+    <div className="flex flex-col gap-1 border border-border rounded-lg p-3 bg-slate-50/50">
       <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{label}</span>
-      <div className="text-sm font-medium text-slate-800">
+      <div className="text-sm font-medium text-foreground">
         {render ? render(value) : (value || <span className="text-slate-400 font-normal">-</span>)}
       </div>
     </div>
@@ -35,7 +35,7 @@ function timeAgo(dateString) {
 
 export function ToolDetail() {
   const { id } = useParams()
-  const { data: tool, isLoading } = useToolDetail(id)
+  const { data: tool, isLoading, error } = useToolDetail(id)
   const { hasRole } = useAuth()
   const isManager = hasRole('Manager')
   
@@ -52,7 +52,8 @@ export function ToolDetail() {
     </div>
   }
 
-  if (!tool) return <div className="p-8 text-center text-slate-500">Tool not found.</div>
+  if (error) return <div className="p-8 text-center text-red-500">Tool not found or failed to load.</div>
+  if (!tool) return <div className="p-8 text-center text-muted-foreground">Tool not found.</div>
 
   const stockByLocation = tool.stock_by_location || []
   const expectedTotal = stockByLocation.reduce((acc, loc) => acc + (loc.quantity || 0), 0)
@@ -72,7 +73,7 @@ export function ToolDetail() {
       />
 
       {/* SECTION 1: Info Grid */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="bg-background rounded-xl shadow-sm border border-border p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
         <InfoField label="Brand" value={tool.brand} />
         <InfoField label="Model" value={tool.model} />
         <InfoField label="Serial Number" value={tool.serial_number} />
@@ -87,10 +88,10 @@ export function ToolDetail() {
 
       {/* SECTION 2: Stock by Location */}
       <div className="flex flex-col gap-4">
-        <h2 className="text-lg font-bold text-slate-800">Stock Availability</h2>
+        <h2 className="text-lg font-bold text-foreground">Stock Availability</h2>
         
         {stockByLocation.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center text-slate-500">
+          <div className="bg-background rounded-xl shadow-sm border border-border p-8 text-center text-muted-foreground">
             <PackageOpen className="h-10 w-10 mx-auto text-slate-300 mb-2" />
             No stock records found for this tool.
           </div>
@@ -107,22 +108,22 @@ export function ToolDetail() {
               else if (available <= min) status = 'low'
 
               return (
-                <div key={loc.location_id} className="min-w-[300px] flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-5 snap-center flex flex-col justify-between">
+                <div key={loc.location_id} className="min-w-[300px] flex-1 bg-background rounded-xl shadow-sm border border-border p-5 snap-center flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-start mb-4">
-                      <h3 className="font-bold text-slate-800">{loc.name}</h3>
+                      <h3 className="font-bold text-foreground">{loc.name}</h3>
                       <StatusBadge type="stock" status={status} />
                     </div>
                     <div className="flex items-end gap-2 mb-2">
-                       <span className="text-4xl font-extrabold text-slate-900 tracking-tighter">{available}</span>
-                       <span className="text-sm text-slate-500 mb-1 font-medium">available</span>
+                       <span className="text-4xl font-extrabold text-foreground tracking-tighter">{available}</span>
+                       <span className="text-sm text-muted-foreground mb-1 font-medium">available</span>
                     </div>
                     <p className="text-xs text-slate-400 font-medium tracking-wide">
                       Total: {qty} <span className="mx-1">|</span> Reserved: {reserved} <span className="mx-1">|</span> Min: {min}
                     </p>
                   </div>
                   
-                  <div className="mt-6 flex items-center gap-2 pt-4 border-t border-slate-100">
+                  <div className="mt-6 flex items-center gap-2 pt-4 border-t border-border">
                     <Button 
                       variant="outline" 
                       className="flex-1 text-xs h-8" 
@@ -148,17 +149,17 @@ export function ToolDetail() {
       </div>
 
       {/* TABS SECTION */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 mt-4 h-[500px] flex flex-col">
+      <div className="bg-background rounded-xl shadow-sm border border-border mt-4 h-[500px] flex flex-col">
         <Tabs defaultValue="history" className="flex flex-col h-full">
-          <div className="px-4 pt-4 border-b border-slate-100">
-            <TabsList className="bg-slate-50 border border-slate-200">
-              <TabsTrigger value="history" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm px-4">
+          <div className="px-4 pt-4 border-b border-border">
+            <TabsList className="bg-muted border border-border">
+              <TabsTrigger value="history" className="text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm px-4">
                 <FileClock className="h-4 w-4 mr-2" /> Stock History
               </TabsTrigger>
-              <TabsTrigger value="loans" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm px-4">
+              <TabsTrigger value="loans" className="text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm px-4">
                 <HandMetal className="h-4 w-4 mr-2" /> Active Loans
               </TabsTrigger>
-              <TabsTrigger value="maintenance" className="text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm px-4">
+              <TabsTrigger value="maintenance" className="text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm px-4">
                 <Wrench className="h-4 w-4 mr-2" /> Maintenance Log
               </TabsTrigger>
             </TabsList>
@@ -167,10 +168,10 @@ export function ToolDetail() {
           <div className="flex-1 overflow-y-auto p-4">
             <TabsContent value="history" className="m-0 h-full">
               {(!tool.movements || tool.movements.length === 0) ? (
-                <div className="h-full flex items-center justify-center text-sm text-slate-500">No stock history available.</div>
+                <div className="h-full flex items-center justify-center text-sm text-muted-foreground">No stock history available.</div>
               ) : (
                 <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="text-xs uppercase text-slate-500 bg-slate-50 sticky top-0">
+                  <thead className="text-xs uppercase text-muted-foreground bg-muted sticky top-0">
                     <tr>
                       <th className="py-2 px-3 font-medium rounded-tl-md">Date</th>
                       <th className="py-2 px-3 font-medium">Type</th>
@@ -182,9 +183,9 @@ export function ToolDetail() {
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
                     {tool.movements.map((m, i) => (
-                      <tr key={i} className="hover:bg-slate-50">
+                      <tr key={i} className="hover:bg-muted">
                         <td className="py-3 px-3">
-                          <div className="font-medium text-slate-900">{timeAgo(m.performed_at)}</div>
+                          <div className="font-medium text-foreground">{timeAgo(m.performed_at)}</div>
                           <div className="text-[10px] text-slate-400">{new Date(m.performed_at).toLocaleDateString()}</div>
                         </td>
                         <td className="py-3 px-3">
@@ -195,7 +196,7 @@ export function ToolDetail() {
                         </td>
                         <td className="py-3 px-3">{m.loc_name}</td>
                         <td className="py-3 px-3">{m.performed_by}</td>
-                        <td className="py-3 px-3 text-slate-500 truncate max-w-[200px]" title={m.notes || m.reference_id}>{m.notes || m.reference_id || '-'}</td>
+                        <td className="py-3 px-3 text-muted-foreground truncate max-w-[200px]" title={m.notes || m.reference_id}>{m.notes || m.reference_id || '-'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -205,10 +206,10 @@ export function ToolDetail() {
 
             <TabsContent value="loans" className="m-0 h-full">
                {(!tool.active_loans || tool.active_loans.length === 0) ? (
-                <div className="h-full flex items-center justify-center text-sm text-slate-500">No active loans for this tool.</div>
+                <div className="h-full flex items-center justify-center text-sm text-muted-foreground">No active loans for this tool.</div>
               ) : (
                 <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="text-xs uppercase text-slate-500 bg-slate-50 sticky top-0">
+                  <thead className="text-xs uppercase text-muted-foreground bg-muted sticky top-0">
                     <tr>
                       <th className="py-2 px-3 font-medium rounded-tl-md">Worker</th>
                       <th className="py-2 px-3 font-medium">Qty</th>
@@ -222,8 +223,8 @@ export function ToolDetail() {
                       const daysOut = Math.floor((Date.now() - new Date(loan.date_out).getTime()) / 86400000)
                       const isOverdue = new Date(loan.expected_return_date).getTime() < Date.now()
                       return (
-                      <tr key={i} className="hover:bg-slate-50">
-                        <td className="py-3 px-3 font-medium text-slate-900">{loan.worker_name} <br/><span className="text-xs text-slate-400 font-normal">{loan.phone || '-'}</span></td>
+                      <tr key={i} className="hover:bg-muted">
+                        <td className="py-3 px-3 font-medium text-foreground">{loan.worker_name} <br/><span className="text-xs text-slate-400 font-normal">{loan.phone || '-'}</span></td>
                         <td className="py-3 px-3 font-bold">{loan.quantity}</td>
                         <td className="py-3 px-3">{new Date(loan.date_out).toLocaleDateString()} <br/><span className="text-xs text-slate-400">{daysOut} days ago</span></td>
                         <td className="py-3 px-3">{new Date(loan.expected_return_date).toLocaleDateString()}</td>
@@ -239,10 +240,10 @@ export function ToolDetail() {
 
             <TabsContent value="maintenance" className="m-0 h-full">
                {(!tool.maintenance_logs || tool.maintenance_logs.length === 0) ? (
-                <div className="h-full flex items-center justify-center text-sm text-slate-500">No maintenance records.</div>
+                <div className="h-full flex items-center justify-center text-sm text-muted-foreground">No maintenance records.</div>
               ) : (
                  <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="text-xs uppercase text-slate-500 bg-slate-50 sticky top-0">
+                  <thead className="text-xs uppercase text-muted-foreground bg-muted sticky top-0">
                     <tr>
                       <th className="py-2 px-3 font-medium rounded-tl-md">Status</th>
                       <th className="py-2 px-3 font-medium">Units</th>
@@ -254,7 +255,7 @@ export function ToolDetail() {
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-slate-700">
                     {tool.maintenance_logs.map((log, i) => (
-                      <tr key={i} className="hover:bg-slate-50">
+                      <tr key={i} className="hover:bg-muted">
                         <td className="py-3 px-3"><StatusBadge type="maintenance" status={log.status} /></td>
                         <td className="py-3 px-3 font-bold">{log.units}</td>
                         <td className="py-3 px-3 max-w-[200px] truncate" title={log.reason}>{log.reason}</td>

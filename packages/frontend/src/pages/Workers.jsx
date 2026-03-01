@@ -15,7 +15,7 @@ function getInitials(name) {
 }
 
 function ReliabilityBar({ value }) {
-  if (value === null || value === undefined) return <span className="text-slate-500 text-sm">100% (No returns)</span>
+  if (value === null || value === undefined) return <span className="text-muted-foreground text-sm">100% (No returns)</span>
   
   let colorClass = "bg-green-500"
   if (value < 50) colorClass = "bg-red-500"
@@ -43,12 +43,12 @@ export function WorkersList() {
       key: "name",
       render: (w) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-sm shrink-0">
+          <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-muted-foreground font-bold text-sm shrink-0">
             {getInitials(w.name)}
           </div>
           <div>
-            <div className="font-medium text-slate-900 leading-tight">{w.name}</div>
-            <Badge variant="outline" className="text-[10px] mt-0.5 bg-white border-slate-200 text-slate-600 h-4 py-0 leading-none">{w.worker_type}</Badge>
+            <div className="font-medium text-foreground leading-tight">{w.name}</div>
+            <Badge variant="outline" className="text-[10px] mt-0.5 bg-background border-border text-muted-foreground h-4 py-0 leading-none">{w.worker_type}</Badge>
           </div>
         </div>
       )
@@ -60,14 +60,14 @@ export function WorkersList() {
       render: (w) => (
         <div className="flex flex-col text-sm">
           {w.phone ? <a href={`tel:${w.phone}`} className="text-blue-600 hover:underline">{w.phone}</a> : <span className="text-slate-400">-</span>}
-          {w.email ? <a href={`mailto:${w.email}`} className="text-slate-500 hover:text-blue-600 mt-0.5">{w.email}</a> : null}
+          {w.email ? <a href={`mailto:${w.email}`} className="text-muted-foreground hover:text-blue-600 mt-0.5">{w.email}</a> : null}
         </div>
       )
     },
     {
       header: "Company",
       key: "company",
-      render: (w) => <span className="text-sm text-slate-600 font-medium">{w.company || '-'}</span>
+      render: (w) => <span className="text-sm text-muted-foreground font-medium">{w.company || '-'}</span>
     },
     {
       header: "Active Loans",
@@ -89,11 +89,11 @@ export function WorkersList() {
       sortable: false,
       render: (w) => (
         <div className="flex items-center justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => navigate(`/workers/${w.id}`)} className="h-8 w-8 text-slate-500 hover:text-blue-600">
+          <Button variant="ghost" size="icon" onClick={() => navigate(`/workers/${w.id}`)} className="h-8 w-8 text-muted-foreground hover:text-blue-600">
             <ExternalLink className="h-4 w-4" />
           </Button>
           {isManager && (
-            <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); /* TODO Edit Worker */ }} className="h-8 w-8 text-slate-500 hover:text-amber-600">
+            <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); /* TODO Edit Worker */ }} className="h-8 w-8 text-muted-foreground hover:text-amber-600">
               <Edit className="h-4 w-4" />
             </Button>
           )}

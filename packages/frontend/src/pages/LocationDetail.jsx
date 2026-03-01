@@ -20,14 +20,14 @@ export function LocationDetail() {
     </div>
   }
 
-  if (!location) return <div className="p-8 text-center text-slate-500">Location not found.</div>
+  if (!location) return <div className="p-8 text-center text-muted-foreground">Location not found.</div>
 
   const stockColumns = [
-    { header: "SKU", key: "sku", render: (s) => <span className="font-mono text-xs px-1.5 py-0.5 bg-slate-100 rounded border border-slate-200 text-slate-600">{s.sku}</span> },
-    { header: "Tool Name", key: "tool_name", render: (s) => <Link to={`/inventory/${s.tool_id}`} className="font-medium text-slate-900 hover:text-blue-600">{s.tool_name}</Link> },
-    { header: "Category", key: "category", render: (s) => <Badge variant="outline" className="text-xs bg-white text-slate-500 font-normal">{s.category}</Badge> },
-    { header: "Qty", key: "quantity", render: (s) => <span className="font-bold text-slate-800">{s.quantity}</span> },
-    { header: "Reserved", key: "reserved_quantity", render: (s) => <span className="text-slate-500">{s.reserved_quantity}</span> },
+    { header: "SKU", key: "sku", render: (s) => <span className="font-mono text-xs px-1.5 py-0.5 bg-slate-100 rounded border border-border text-muted-foreground">{s.sku}</span> },
+    { header: "Tool Name", key: "tool_name", render: (s) => <Link to={`/inventory/${s.tool_id}`} className="font-medium text-foreground hover:text-blue-600">{s.tool_name}</Link> },
+    { header: "Category", key: "category", render: (s) => <Badge variant="outline" className="text-xs bg-background text-muted-foreground font-normal">{s.category}</Badge> },
+    { header: "Qty", key: "quantity", render: (s) => <span className="font-bold text-foreground">{s.quantity}</span> },
+    { header: "Reserved", key: "reserved_quantity", render: (s) => <span className="text-muted-foreground">{s.reserved_quantity}</span> },
     { 
        header: "Available", 
        key: "available", 
@@ -78,17 +78,17 @@ export function LocationDetail() {
           </div>
           <div className="flex items-center gap-4 shrink-0">
              {location.active_transfers_in > 0 && (
-               <div className="text-center px-4 py-2 bg-white rounded-lg shadow-sm border border-blue-100">
-                 <span className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">In</span>
-                  <span className="font-bold text-lg text-slate-900">{active_transfers_in}</span>
-                 <span className="text-xs text-slate-500 ml-1">arriving</span>
+               <div className="text-center px-4 py-2 bg-background rounded-lg shadow-sm border border-blue-100">
+                 <span className="block text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1">In</span>
+                  <span className="font-bold text-lg text-foreground">{active_transfers_in}</span>
+                 <span className="text-xs text-muted-foreground ml-1">arriving</span>
                </div>
              )}
              {location.active_transfers_out > 0 && (
-               <div className="text-center px-4 py-2 bg-white rounded-lg shadow-sm border border-blue-100">
-                 <span className="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Out</span>
-                  <span className="font-bold text-lg text-slate-900">{active_transfers_out}</span>
-                 <span className="text-xs text-slate-500 ml-1">leaving</span>
+               <div className="text-center px-4 py-2 bg-background rounded-lg shadow-sm border border-blue-100">
+                 <span className="block text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-1">Out</span>
+                  <span className="font-bold text-lg text-foreground">{active_transfers_out}</span>
+                 <span className="text-xs text-muted-foreground ml-1">leaving</span>
                </div>
              )}
              <Link to="/transfers" className="text-sm font-semibold text-blue-700 hover:text-blue-900 px-3 py-2">
@@ -99,15 +99,15 @@ export function LocationDetail() {
       )}
 
       {/* STOCK TABLE */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-        <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-          <h2 className="font-bold text-slate-800 text-lg">Inventory at Location</h2>
+      <div className="bg-background rounded-xl shadow-sm border border-border flex flex-col overflow-hidden">
+        <div className="p-4 border-b border-border bg-slate-50/50">
+          <h2 className="font-bold text-foreground text-lg">Inventory at Location</h2>
         </div>
         
         {(!location.stock || location.stock.length === 0) ? (
           <div className="flex flex-col items-center justify-center p-12 text-center">
              <PackageOpen className="w-12 h-12 text-slate-300 mb-4" />
-             <h3 className="text-lg font-medium text-slate-600">No stock at this location</h3>
+             <h3 className="text-lg font-medium text-muted-foreground">No stock at this location</h3>
              <p className="text-sm text-slate-400">Transfer tools here to build up inventory.</p>
           </div>
         ) : (

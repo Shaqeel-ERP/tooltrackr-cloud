@@ -119,7 +119,7 @@ function UserModal({ isOpen, onClose, user, currentUser }) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Username <span className="text-red-500">*</span></Label>
-              <Input {...register("username")} placeholder="johndoe" disabled={!!user} className={user ? "bg-slate-50 opacity-70" : ""} />
+              <Input {...register("username")} placeholder="johndoe" disabled={!!user} className={user ? "bg-muted opacity-70" : ""} />
               {errors.username && <p className="text-xs text-red-500">{errors.username.message}</p>}
             </div>
             <div className="space-y-2">
@@ -129,7 +129,7 @@ function UserModal({ isOpen, onClose, user, currentUser }) {
                  name="role_id"
                  render={({ field }) => (
                    <Select value={String(field.value)} onValueChange={v => field.onChange(Number(v))} disabled={isSelf}>
-                     <SelectTrigger className={isSelf ? "bg-slate-50 opacity-70" : ""}>
+                     <SelectTrigger className={isSelf ? "bg-muted opacity-70" : ""}>
                        <SelectValue />
                      </SelectTrigger>
                      <SelectContent>
@@ -151,7 +151,7 @@ function UserModal({ isOpen, onClose, user, currentUser }) {
              <Label>{user ? "New Password (optional)" : "Password"}</Label>
              <div className="relative">
                <Input type={showPassword ? "text" : "password"} {...register("password")} placeholder={user ? "Leave blank to keep current" : "Min 8 characters"} className="pr-10" />
-               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 focus:outline-none">
+               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-2.5 text-slate-400 hover:text-muted-foreground focus:outline-none">
                  {showPassword ? <EyeOffIcon className="w-4 h-4" /> : <EyeIcon className="w-4 h-4" />}
                </button>
              </div>
@@ -190,7 +190,7 @@ export function UserManagement() {
       header: "User",
       key: "user",
       render: (u) => {
-        let bg = "bg-slate-100 text-slate-600"
+        let bg = "bg-slate-100 text-muted-foreground"
         if (u.role_name === 'Admin') bg = "bg-purple-100 text-purple-700"
         else if (u.role_name === 'Manager') bg = "bg-blue-100 text-blue-700"
         return (
@@ -199,14 +199,14 @@ export function UserManagement() {
                {getInitials(u.full_name)}
              </div>
              <div className="flex flex-col">
-               <span className="font-semibold text-slate-900">{u.full_name}</span>
+               <span className="font-semibold text-foreground">{u.full_name}</span>
                <span className="text-xs text-slate-400">@{u.username}</span>
              </div>
           </div>
         )
       }
     },
-    { header: "Email", key: "email", render: (u) => <span className="text-sm text-slate-600">{u.email || '-'}</span> },
+    { header: "Email", key: "email", render: (u) => <span className="text-sm text-muted-foreground">{u.email || '-'}</span> },
     { header: "Role", key: "role", render: (u) => {
         let bClass = "bg-slate-100 text-slate-700"
         if (u.role_name === 'Admin') bClass = "bg-purple-100 text-purple-700"
@@ -218,7 +218,7 @@ export function UserManagement() {
          ? <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-0">ACTIVE</Badge> 
          : <Badge className="bg-red-100 text-red-800 hover:bg-red-100 border-0">INACTIVE</Badge>
     )},
-    { header: "Last Login", key: "last_login", render: (u) => <span className="text-sm text-slate-500">{timeAgo(u.last_login)}</span> },
+    { header: "Last Login", key: "last_login", render: (u) => <span className="text-sm text-muted-foreground">{timeAgo(u.last_login)}</span> },
     {
       header: "Actions",
       key: "actions",
@@ -227,7 +227,7 @@ export function UserManagement() {
         const isSelf = currentUser && currentUser.username === u.username
         return (
           <div className="flex items-center justify-end gap-1">
-             <Button variant="ghost" size="icon" onClick={() => { setEditingUser(u); setModalOpen(true) }} className="text-slate-500 hover:text-blue-600 h-8 w-8">
+             <Button variant="ghost" size="icon" onClick={() => { setEditingUser(u); setModalOpen(true) }} className="text-muted-foreground hover:text-blue-600 h-8 w-8">
                <Edit className="w-4 h-4" />
              </Button>
              {!isSelf && (
@@ -237,7 +237,7 @@ export function UserManagement() {
                  destructive={u.is_active}
                  onConfirm={() => handleDeactivate(u.id)}
                >
-                 <Button variant="ghost" size="icon" className={cn("h-8 w-8", u.is_active ? "text-slate-500 hover:text-red-600 hover:bg-red-50" : "text-slate-400 hover:text-emerald-600 hover:bg-emerald-50")}>
+                 <Button variant="ghost" size="icon" className={cn("h-8 w-8", u.is_active ? "text-muted-foreground hover:text-red-600 hover:bg-red-50" : "text-slate-400 hover:text-emerald-600 hover:bg-emerald-50")}>
                    <ShieldOff className="w-4 h-4" />
                  </Button>
                </ConfirmDialog>
@@ -260,7 +260,7 @@ export function UserManagement() {
         }
       />
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-[500px]">
+      <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden flex-1 flex flex-col min-h-[500px]">
         <DataTable 
           columns={columns} 
           data={users} 

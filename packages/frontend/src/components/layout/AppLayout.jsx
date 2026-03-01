@@ -190,7 +190,7 @@ export function AppLayout() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 font-sans flex text-base">
+    <div className="min-h-screen bg-muted text-foreground dark:bg-slate-950 dark:text-slate-100 font-sans flex text-base">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col w-[240px] fixed inset-y-0 left-0 bg-slate-900 z-50 shadow-xl">
         {sidebarContent}
@@ -199,11 +199,11 @@ export function AppLayout() {
       {/* Main Content Area */}
       <div className="flex-1 md:ml-[240px] flex flex-col min-w-0">
         {/* Top Navbar */}
-        <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40">
+        <header className="h-16 bg-background dark:bg-slate-900 border-b border-border dark:border-slate-800 px-4 md:px-8 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center gap-4">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <button className="md:hidden p-2 -ml-2 rounded-md hover:bg-slate-100 text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400">
+                <button className="md:hidden p-2 -ml-2 rounded-md hover:bg-slate-100 text-muted-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400">
                   <Menu className="w-5 h-5" />
                 </button>
               </SheetTrigger>
@@ -211,10 +211,10 @@ export function AppLayout() {
                 {sidebarContent}
               </SheetContent>
             </Sheet>
-            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 capitalize">{pageTitle.replace('-', ' ')}</h2>
+            <h2 className="text-lg font-semibold text-foreground dark:text-slate-100 capitalize">{pageTitle.replace('-', ' ')}</h2>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={handleToggleTheme} className="text-slate-500 hover:text-slate-900 dark:hover:text-white w-10 h-10 rounded-full">
+            <Button variant="ghost" size="icon" onClick={handleToggleTheme} className="text-muted-foreground hover:text-foreground dark:hover:text-white w-10 h-10 rounded-full">
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
             {/* Future: Theme toggle, Notifications */}
@@ -223,7 +223,7 @@ export function AppLayout() {
 
         {/* Page Content */}
         <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
-          <React.Suspense fallback={<div className="flex items-center gap-2 text-sm text-slate-500"><Loader2 className="w-4 h-4 animate-spin" /> Loading...</div>}>
+          <React.Suspense fallback={<div className="flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin" /> Loading...</div>}>
             <Outlet />
           </React.Suspense>
         </main>

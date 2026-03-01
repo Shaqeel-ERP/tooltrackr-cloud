@@ -79,12 +79,12 @@ function StockLevelsTab() {
   }
 
   const columns = [
-    { header: "SKU", key: "sku", render: (r) => <span className="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-slate-600">{r.sku}</span> },
+    { header: "SKU", key: "sku", render: (r) => <span className="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded border border-border text-muted-foreground">{r.sku}</span> },
     { header: "Tool Name", key: "name", render: (r) => <span className="font-medium">{r.name}</span> },
-    { header: "Category", key: "category", render: (r) => <span className="text-slate-500 text-sm">{r.category}</span> },
-    { header: "Location", key: "loc_name", render: (r) => <span className="text-slate-600 text-sm">{r.loc_name}</span> },
-    { header: "Total", key: "quantity", render: (r) => <span className="text-slate-500">{r.quantity}</span> },
-    { header: "Reserved", key: "reserved_quantity", render: (r) => <span className="text-slate-500">{r.reserved_quantity}</span> },
+    { header: "Category", key: "category", render: (r) => <span className="text-muted-foreground text-sm">{r.category}</span> },
+    { header: "Location", key: "loc_name", render: (r) => <span className="text-muted-foreground text-sm">{r.loc_name}</span> },
+    { header: "Total", key: "quantity", render: (r) => <span className="text-muted-foreground">{r.quantity}</span> },
+    { header: "Reserved", key: "reserved_quantity", render: (r) => <span className="text-muted-foreground">{r.reserved_quantity}</span> },
     { header: "Available", key: "avail", render: (r) => {
         const avail = r.quantity - r.reserved_quantity
         return <span className={cn("font-bold text-base", avail === 0 ? "text-red-600" : (avail <= (r.min_stock_level || 0) && r.min_stock_level > 0 ? "text-amber-600" : "text-green-600"))}>{avail}</span>
@@ -125,7 +125,7 @@ function StockLevelsTab() {
               </SelectContent>
             </Select>
          </div>
-         <Button onClick={handleExport} variant="outline" className="gap-2 bg-white">
+         <Button onClick={handleExport} variant="outline" className="gap-2 bg-background">
            <Download className="w-4 h-4" /> Export CSV
          </Button>
       </div>
@@ -142,7 +142,7 @@ function StockLevelsTab() {
          </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">
         <DataTable columns={columns} data={filtered} isLoading={isLoading} searchKeys={["sku", "name"]} emptyMessage="No stock data found." />
       </div>
     </div>
@@ -155,8 +155,8 @@ function WorkerHoldingsTab() {
 
   const handleExport = () => {
     const rows = []
-    holdings.forEach(w => {
-       w.loans.forEach(l => {
+      ; (holdings || []).forEach(w => {
+        (w.loans || []).forEach(l => {
           rows.push({
              WorkerName: w.worker_name,
              Phone: w.phone || '',
@@ -178,21 +178,21 @@ function WorkerHoldingsTab() {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-         <Button onClick={handleExport} variant="outline" className="gap-2 bg-white">
+         <Button onClick={handleExport} variant="outline" className="gap-2 bg-background">
            <Download className="w-4 h-4" /> Export CSV
          </Button>
       </div>
 
       <div className="space-y-3">
-        {holdings.length === 0 ? (
-          <div className="text-center p-12 bg-white rounded-xl border border-slate-200 text-slate-500">No active worker holdings.</div>
+        {(!holdings || holdings.length === 0) ? (
+          <div className="text-center p-12 bg-background rounded-xl border border-border text-muted-foreground">No active worker holdings.</div>
         ) : (
-          holdings.map(worker => {
+            (holdings || []).map(worker => {
             const isExp = expanded.has(worker.worker_id)
             return (
-              <div key={worker.worker_id} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+              <div key={worker.worker_id} className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">
                 <div 
-                  className={cn("p-4 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors", isExp ? "bg-slate-50 border-b border-slate-100" : "")}
+                  className={cn("p-4 flex items-center justify-between cursor-pointer hover:bg-muted transition-colors", isExp ? "bg-muted border-b border-border" : "")}
                   onClick={() => {
                      const next = new Set(expanded)
                      if (next.has(worker.worker_id)) next.delete(worker.worker_id)
@@ -202,11 +202,11 @@ function WorkerHoldingsTab() {
                 >
                   <div className="flex items-center gap-4">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-slate-900 text-lg">{worker.worker_name}</span>
-                      <span className="text-xs text-slate-500">{worker.phone} {worker.company ? `· ${worker.company}` : ''}</span>
+                      <span className="font-semibold text-foreground text-lg">{worker.worker_name}</span>
+                      <span className="text-xs text-muted-foreground">{worker.phone} {worker.company ? `· ${worker.company}` : ''}</span>
                     </div>
                     <div className="flex items-center gap-2 ml-4">
-                      <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 font-bold">{worker.loans.length} Items</Badge>
+                      <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 font-bold">{(worker.loans || []).length} Items</Badge>
                       <Badge variant="outline" className={cn(
                         "text-[10px] uppercase font-bold",
                         worker.reliability_score >= 80 ? "bg-green-50 text-green-700 border-green-200" :
@@ -225,7 +225,7 @@ function WorkerHoldingsTab() {
                 {isExp && (
                   <div className="p-0 bg-slate-50/50">
                      <table className="w-full text-sm text-left">
-                       <thead className="bg-slate-100/50 text-slate-600 text-xs uppercase tracking-wider">
+                       <thead className="bg-slate-100/50 text-muted-foreground text-xs uppercase tracking-wider">
                          <tr>
                            <th className="px-6 py-2">Item</th>
                            <th className="px-6 py-2">Qty</th>
@@ -234,20 +234,20 @@ function WorkerHoldingsTab() {
                          </tr>
                        </thead>
                        <tbody className="divide-y divide-slate-100">
-                         {worker.loans.map(loan => {
+                        {(worker.loans || []).map(loan => {
                            const overdue = new Date(loan.expected_return_date).getTime() < Date.now()
                            return (
-                             <tr key={loan.id} className="hover:bg-white transition-colors">
+                             <tr key={loan.id} className="hover:bg-background transition-colors">
                                <td className="px-6 py-3">
                                  <div className="flex items-center gap-2">
-                                   <span className="font-mono text-[10px] bg-slate-100 border border-slate-200 px-1 py-0.5 rounded text-slate-500">{loan.sku}</span>
-                                   <span className="font-medium text-slate-800">{loan.tool_name}</span>
+                                   <span className="font-mono text-[10px] bg-slate-100 border border-border px-1 py-0.5 rounded text-muted-foreground">{loan.sku}</span>
+                                   <span className="font-medium text-foreground">{loan.tool_name}</span>
                                  </div>
                                </td>
                                <td className="px-6 py-3 font-semibold text-slate-700">{loan.quantity}</td>
-                               <td className="px-6 py-3 text-slate-600">{new Date(loan.date_out).toLocaleDateString()}</td>
+                               <td className="px-6 py-3 text-muted-foreground">{new Date(loan.date_out).toLocaleDateString()}</td>
                                <td className="px-6 py-3">
-                                 <span className={overdue ? "text-red-600 font-medium" : "text-slate-600"}>
+                                 <span className={overdue ? "text-red-600 font-medium" : "text-muted-foreground"}>
                                     {new Date(loan.expected_return_date).toLocaleDateString()}
                                     {overdue && <span className="ml-2 uppercase text-[9px] font-bold bg-red-100 text-red-700 px-1 py-0.5 rounded">Overdue</span>}
                                  </span>
@@ -308,22 +308,22 @@ function MovementsTab() {
   }
 
   const columns = [
-    { header: "Date/Time", key: "performed_at", render: (m) => <span className="text-sm whitespace-nowrap text-slate-600">{new Date(m.performed_at).toLocaleString()}</span> },
-    { header: "Type", key: "movement_type", render: (m) => <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-wider bg-slate-50">{m.movement_type.replace('_', ' ')}</Badge> },
+    { header: "Date/Time", key: "performed_at", render: (m) => <span className="text-sm whitespace-nowrap text-muted-foreground">{new Date(m.performed_at).toLocaleString()}</span> },
+    { header: "Type", key: "movement_type", render: (m) => <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-wider bg-muted">{m.movement_type.replace('_', ' ')}</Badge> },
     { header: "Tool", key: "tool", render: (m) => (
       <div className="flex flex-col">
-        <span className="font-medium text-slate-900">{m.tool_name}</span>
+        <span className="font-medium text-foreground">{m.tool_name}</span>
         <span className="font-mono text-[10px] text-slate-400">{m.sku}</span>
       </div>
     )},
-    { header: "Location", key: "loc_name", render: (m) => <span className="text-sm text-slate-600">{m.loc_name}</span> },
+    { header: "Location", key: "loc_name", render: (m) => <span className="text-sm text-muted-foreground">{m.loc_name}</span> },
     { header: "Qty", key: "quantity", render: (m) => {
        const isPositive = m.quantity > 0
        return <span className={cn("font-bold", isPositive ? "text-green-600" : "text-red-600")}>{isPositive ? '+' : ''}{m.quantity}</span>
     }},
-    { header: "By", key: "performed_by", render: (m) => <span className="text-sm text-slate-600">{m.performed_by}</span> },
+    { header: "By", key: "performed_by", render: (m) => <span className="text-sm text-muted-foreground">{m.performed_by}</span> },
     { header: "Notes", key: "notes", sortable: false, render: (m) => (
-      <span className="text-xs text-slate-500 max-w-[150px] truncate block" title={m.notes}>{m.notes || '-'}</span>
+      <span className="text-xs text-muted-foreground max-w-[150px] truncate block" title={m.notes}>{m.notes || '-'}</span>
     )},
     { header: "Ref", key: "reference_id", render: (m) => <span className="text-xs text-slate-400 font-mono">{m.reference_id || '-'}</span> }
   ]
@@ -345,12 +345,12 @@ function MovementsTab() {
               <Input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="w-auto" />
             </div>
          </div>
-         <Button onClick={handleExport} variant="outline" className="gap-2 bg-white">
+         <Button onClick={handleExport} variant="outline" className="gap-2 bg-background">
            <Download className="w-4 h-4" /> Export CSV
          </Button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">
         <DataTable columns={columns} data={filtered} isLoading={isLoading} searchKeys={["tool_name", "sku", "performed_by"]} emptyMessage="No movements found in this range." />
       </div>
     </div>
@@ -405,7 +405,7 @@ function CostAnalysisTab() {
     })))
   }
 
-  if (isLoading) return <div className="p-8 flex justify-center"><div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-amber-600 animate-spin" /></div>
+  if (isLoading) return <div className="p-8 flex justify-center"><div className="w-8 h-8 rounded-full border-4 border-border border-t-amber-600 animate-spin" /></div>
 
   return (
     <div className="space-y-6">
@@ -418,16 +418,16 @@ function CostAnalysisTab() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Supplier Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-             <h3 className="font-semibold text-slate-800">Spend by Supplier</h3>
-             <Button variant="ghost" size="sm" onClick={handleExportSuppliers} className="h-8 gap-2 text-slate-500 hover:text-blue-600">
+        <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-border flex items-center justify-between bg-muted">
+             <h3 className="font-semibold text-foreground">Spend by Supplier</h3>
+             <Button variant="ghost" size="sm" onClick={handleExportSuppliers} className="h-8 gap-2 text-muted-foreground hover:text-blue-600">
                 <Download className="w-3.5 h-3.5" /> Export
              </Button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50/50 text-slate-500 text-xs uppercase tracking-wider">
+              <thead className="bg-slate-50/50 text-muted-foreground text-xs uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Supplier</th>
                   <th className="px-4 py-3 text-center">Orders</th>
@@ -436,10 +436,10 @@ function CostAnalysisTab() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {supplierStats.map(s => (
-                  <tr key={s.name} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-900">{s.name}</td>
-                    <td className="px-4 py-3 text-center text-slate-600">{s.count}</td>
-                    <td className="px-4 py-3 text-right font-bold text-slate-800">AED {s.spend.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                  <tr key={s.name} className="hover:bg-muted">
+                    <td className="px-4 py-3 font-medium text-foreground">{s.name}</td>
+                    <td className="px-4 py-3 text-center text-muted-foreground">{s.count}</td>
+                    <td className="px-4 py-3 text-right font-bold text-foreground">AED {s.spend.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
                   </tr>
                 ))}
                 {supplierStats.length === 0 && <tr><td colSpan="3" className="p-4 text-center text-slate-400">No purchase data.</td></tr>}
@@ -449,13 +449,13 @@ function CostAnalysisTab() {
         </div>
 
         {/* Category Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-100 bg-slate-50">
-             <h3 className="font-semibold text-slate-800">Spend by Category</h3>
+        <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-border bg-muted">
+             <h3 className="font-semibold text-foreground">Spend by Category</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50/50 text-slate-500 text-xs uppercase tracking-wider">
+              <thead className="bg-slate-50/50 text-muted-foreground text-xs uppercase tracking-wider">
                 <tr>
                   <th className="px-4 py-3">Category</th>
                   <th className="px-4 py-3 text-center">Items</th>
@@ -464,10 +464,10 @@ function CostAnalysisTab() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {categoryStats.map(c => (
-                  <tr key={c.cat} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-900">{c.cat}</td>
-                    <td className="px-4 py-3 text-center text-slate-600">{c.items}</td>
-                    <td className="px-4 py-3 text-right font-bold text-slate-800">AED {c.cost.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
+                  <tr key={c.cat} className="hover:bg-muted">
+                    <td className="px-4 py-3 font-medium text-foreground">{c.cat}</td>
+                    <td className="px-4 py-3 text-center text-muted-foreground">{c.items}</td>
+                    <td className="px-4 py-3 text-right font-bold text-foreground">AED {c.cost.toLocaleString(undefined, {minimumFractionDigits:2})}</td>
                   </tr>
                 ))}
                 {categoryStats.length === 0 && <tr><td colSpan="3" className="p-4 text-center text-slate-400">No purchase data.</td></tr>}
@@ -486,10 +486,10 @@ export function ReportsPage() {
       <div className="flex flex-col gap-6 h-full min-h-[calc(100vh-6rem)]">
       <PageHeader title="Reports & Analytics" />
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex-1 flex flex-col">
+      <div className="bg-background rounded-xl shadow-sm border border-border flex-1 flex flex-col">
         <Tabs defaultValue="stock" className="flex flex-col h-full">
-          <div className="px-4 pt-4 border-b border-slate-100">
-            <TabsList className="bg-slate-50 border border-slate-200">
+          <div className="px-4 pt-4 border-b border-border">
+            <TabsList className="bg-muted border border-border">
               <TabsTrigger value="stock" className="text-sm px-4">Stock Levels</TabsTrigger>
               <TabsTrigger value="workers" className="text-sm px-4">Worker Holdings</TabsTrigger>
               <TabsTrigger value="movements" className="text-sm px-4">Movements</TabsTrigger>

@@ -82,7 +82,7 @@ export function MaintenanceModal({ isOpen, onClose, tool, locationId, locationNa
           <div className="space-y-2">
             <Label>Units to Send <span className="text-red-500">*</span></Label>
             <Input type="number" {...register("units")} />
-            <p className="text-xs text-slate-500">Maximum {availableStock} available at {locationName}</p>
+            <p className="text-xs text-muted-foreground">Maximum {availableStock} available at {locationName}</p>
             {errors.units && <p className="text-xs text-red-500">{errors.units.message}</p>}
           </div>
 

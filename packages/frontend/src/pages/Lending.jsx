@@ -32,14 +32,14 @@ function LoanCard({ loan, isOverdue, onReturn }) {
 
   return (
     <div className={cn(
-      "bg-white rounded-xl shadow-sm border p-4 flex flex-col justify-between transition-shadow hover:shadow-md",
-      isOverdue ? "border-l-4 border-l-red-500 border-y-slate-200 border-r-slate-200" : "border-slate-200"
+      "bg-background rounded-xl shadow-sm border p-4 flex flex-col justify-between transition-shadow hover:shadow-md",
+      isOverdue ? "border-l-4 border-l-red-500 border-y-slate-200 border-r-slate-200" : "border-border"
     )}>
       {/* TOP ROW */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 pr-2">
-           <h3 className="font-semibold text-slate-900 leading-tight mb-1">{loan.tool_name}</h3>
-           <Badge variant="outline" className="font-mono text-[10px] bg-slate-50">{loan.sku}</Badge>
+           <h3 className="font-semibold text-foreground leading-tight mb-1">{loan.tool_name}</h3>
+           <Badge variant="outline" className="font-mono text-[10px] bg-muted">{loan.sku}</Badge>
         </div>
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
           <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">×{loan.quantity}</Badge>
@@ -49,11 +49,11 @@ function LoanCard({ loan, isOverdue, onReturn }) {
 
       {/* ROW 2: WORKER */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-bold text-sm shrink-0">
+        <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-muted-foreground font-bold text-sm shrink-0">
           {getInitials(loan.worker_name)}
         </div>
         <div className="min-w-0 flex-1">
-          <Link to={`/workers/${loan.worker_id}`} className="font-medium text-slate-900 hover:text-blue-600 truncate block">
+          <Link to={`/workers/${loan.worker_id}`} className="font-medium text-foreground hover:text-blue-600 truncate block">
             {loan.worker_name}
           </Link>
           {loan.phone && (
@@ -71,12 +71,12 @@ function LoanCard({ loan, isOverdue, onReturn }) {
       {/* ROW 3 & 4: DETAILS */}
       <div className="space-y-2 mb-4">
         {loan.loc_name && (
-          <div className="flex items-center gap-2 text-xs text-slate-600">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin className="w-3.5 h-3.5 text-slate-400" />
             <span className="truncate">{loan.loc_name}</span>
           </div>
         )}
-        <div className="flex items-center gap-2 text-xs text-slate-600">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Calendar className="w-3.5 h-3.5 text-slate-400" />
           <span>Issued: {new Date(loan.date_out).toLocaleDateString()}</span>
         </div>
@@ -85,7 +85,7 @@ function LoanCard({ loan, isOverdue, onReturn }) {
             <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
             <span className={cn(
               "font-medium",
-              isOverdue ? "text-red-600" : (daysUntilDue <= 3 ? "text-orange-500" : "text-slate-600")
+              isOverdue ? "text-red-600" : (daysUntilDue <= 3 ? "text-orange-500" : "text-muted-foreground")
             )}>
               Expected: {new Date(loan.expected_return_date).toLocaleDateString()}
             </span>
@@ -97,7 +97,7 @@ function LoanCard({ loan, isOverdue, onReturn }) {
       </div>
 
       {/* BOTTOM */}
-      <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+      <div className="mt-auto pt-4 border-t border-border flex items-center justify-between gap-2">
         <div className="flex-1 truncate">
            {loan.job_site && <Badge variant="secondary" className="text-[10px] font-normal truncate max-w-full bg-slate-100">{loan.job_site}</Badge>}
         </div>
@@ -174,12 +174,12 @@ export function Lending() {
 
   const historyColumns = [
     { header: "Date Out", key: "date_out", render: (l) => <span className="whitespace-nowrap">{new Date(l.date_out).toLocaleDateString()}</span> },
-    { header: "SKU", key: "sku", render: (l) => <span className="font-mono text-xs px-1.5 py-0.5 bg-slate-100 rounded border border-slate-200">{l.sku}</span> },
-    { header: "Tool Name", key: "tool_name", render: (l) => <span className="font-medium text-slate-900">{l.tool_name}</span> },
+    { header: "SKU", key: "sku", render: (l) => <span className="font-mono text-xs px-1.5 py-0.5 bg-slate-100 rounded border border-border">{l.sku}</span> },
+    { header: "Tool Name", key: "tool_name", render: (l) => <span className="font-medium text-foreground">{l.tool_name}</span> },
     { header: "Worker", key: "worker_name", render: (l) => <span className="text-slate-700">{l.worker_name}</span> },
     { header: "Qty", key: "quantity", render: (l) => <span className="font-bold">{l.quantity}</span> },
-    { header: "Location", key: "loc_name", render: (l) => <span className="text-xs text-slate-500">{l.loc_name || '-'}</span> },
-    { header: "Job Site", key: "job_site", render: (l) => <span className="text-xs text-slate-500">{l.job_site || '-'}</span> },
+    { header: "Location", key: "loc_name", render: (l) => <span className="text-xs text-muted-foreground">{l.loc_name || '-'}</span> },
+    { header: "Job Site", key: "job_site", render: (l) => <span className="text-xs text-muted-foreground">{l.job_site || '-'}</span> },
     { header: "Expected", key: "expected_return_date", render: (l) => <span className="whitespace-nowrap">{new Date(l.expected_return_date).toLocaleDateString()}</span> },
     { header: "Actual Return", key: "returned_at", render: (l) => <span className="whitespace-nowrap">{l.returned_at ? new Date(l.returned_at).toLocaleDateString() : <span className="text-slate-300">-</span>}</span> },
     { header: "Duration", key: "duration", sortable: false, render: (l) => {
@@ -203,22 +203,22 @@ export function Lending() {
       />
 
       {/* CUSTOM TABS */}
-      <div className="flex items-center gap-6 border-b border-slate-200 overflow-x-auto pb-[1px]">
+      <div className="flex items-center gap-6 border-b border-border overflow-x-auto pb-[1px]">
          <button 
            onClick={() => handleTabChange('active')} 
-           className={cn("pb-3 px-1 text-sm font-medium transition-colors whitespace-nowrap", currentTab === 'active' ? "border-b-2 border-blue-600 text-blue-600" : "text-slate-500 hover:text-slate-700")}
+           className={cn("pb-3 px-1 text-sm font-medium transition-colors whitespace-nowrap", currentTab === 'active' ? "border-b-2 border-blue-600 text-blue-600" : "text-muted-foreground hover:text-slate-700")}
          >
            Active Loans
          </button>
          <button 
            onClick={() => handleTabChange('overdue')} 
-           className={cn("pb-3 px-1 text-sm font-medium transition-colors whitespace-nowrap", currentTab === 'overdue' ? "border-b-2 border-red-600 text-red-600 font-bold" : "text-slate-500 hover:text-slate-700")}
+           className={cn("pb-3 px-1 text-sm font-medium transition-colors whitespace-nowrap", currentTab === 'overdue' ? "border-b-2 border-red-600 text-red-600 font-bold" : "text-muted-foreground hover:text-slate-700")}
          >
            Overdue
          </button>
          <button 
            onClick={() => handleTabChange('history')} 
-           className={cn("pb-3 px-1 text-sm font-medium transition-colors whitespace-nowrap", currentTab === 'history' ? "border-b-2 border-slate-900 text-slate-900" : "text-slate-500 hover:text-slate-700")}
+           className={cn("pb-3 px-1 text-sm font-medium transition-colors whitespace-nowrap", currentTab === 'history' ? "border-b-2 border-slate-900 text-foreground" : "text-muted-foreground hover:text-slate-700")}
          >
            Loan History
          </button>
@@ -265,7 +265,7 @@ export function Lending() {
                     <p className="text-green-600/80 text-sm max-w-sm">All tools have been returned on time or are still within their expected lending periods.</p>
                  </div>
                ) : (
-                 <div className="text-center p-12 text-slate-500 bg-white rounded-xl border border-slate-200 mt-4">
+                 <div className="text-center p-12 text-muted-foreground bg-background rounded-xl border border-border mt-4">
                    No active loans found.
                  </div>
                )

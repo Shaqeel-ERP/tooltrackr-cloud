@@ -9,7 +9,7 @@ const BORDER_COLORS = {
 }
 
 const ICON_BG_COLORS = {
-  default: "bg-slate-100 text-slate-600",
+  default: "bg-slate-100 text-muted-foreground",
   success: "bg-green-100 text-green-600",
   warning: "bg-amber-100 text-amber-600",
   danger: "bg-red-100 text-red-600",
@@ -19,12 +19,12 @@ export function StatCard({ title, value, subtitle, icon: Icon, variant = "defaul
   return (
     <div
       onClick={onClick}
-      className={`relative flex flex-col bg-white rounded-xl shadow-sm p-6 border border-slate-200 border-l-[4px] ${BORDER_COLORS[variant]} ${
+      className={`relative flex flex-col bg-background rounded-xl shadow-sm p-6 border border-border border-l-[4px] ${BORDER_COLORS[variant]} ${
         onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""
       }`}
     >
       <div className="flex justify-between items-start mb-4">
-        <h3 className="text-sm font-medium text-slate-600">{title}</h3>
+        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         {Icon && (
           <div className={`p-2 rounded-full ${ICON_BG_COLORS[variant]}`}>
             <Icon className="h-5 w-5" />
@@ -32,7 +32,7 @@ export function StatCard({ title, value, subtitle, icon: Icon, variant = "defaul
         )}
       </div>
       <div className="flex items-baseline gap-2">
-        <p className="text-3xl font-bold text-slate-900">{value}</p>
+        <p className="text-3xl font-bold text-foreground">{value}</p>
         {trend && (
           <span
             className={`flex items-center text-xs font-semibold ${

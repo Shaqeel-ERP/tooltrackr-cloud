@@ -13,7 +13,7 @@ const STATUS_MAP = {
     out: { color: "bg-red-100 text-red-800", label: "Out of Stock" },
   },
   transfer: {
-    draft: { color: "bg-slate-100 text-slate-800", label: "Draft" },
+    draft: { color: "bg-slate-100 text-foreground", label: "Draft" },
     approved: { color: "bg-blue-100 text-blue-800", label: "Approved" },
     completed: { color: "bg-green-100 text-green-800", label: "Completed" },
     cancelled: { color: "bg-red-100 text-red-800", label: "Cancelled" },
@@ -35,7 +35,7 @@ const STATUS_MAP = {
   role: {
     Admin: { color: "bg-purple-100 text-purple-800", label: "Admin" },
     Manager: { color: "bg-blue-100 text-blue-800", label: "Manager" },
-    User: { color: "bg-slate-100 text-slate-800", label: "User" },
+    User: { color: "bg-slate-100 text-foreground", label: "User" },
   },
   condition: {
     good: { color: "bg-green-100 text-green-800", label: "Good" },
@@ -46,7 +46,7 @@ const STATUS_MAP = {
 
 export function StatusBadge({ status, type }) {
   if (!status || !type || !STATUS_MAP[type]?.[status]) {
-    return <Badge variant="outline" className="text-slate-500 bg-slate-50">{status}</Badge>
+    return <Badge variant="outline" className="text-muted-foreground bg-muted">{status}</Badge>
   }
 
   const { color, label } = STATUS_MAP[type][status]

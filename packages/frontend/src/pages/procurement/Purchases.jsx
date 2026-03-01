@@ -15,16 +15,16 @@ import { cn } from "@/lib/utils"
 function ExpandedRow({ poId, isManager, onReceive }) {
   const { data: po, isLoading } = usePurchaseDetail(poId)
 
-  if (isLoading) return <div className="p-6 text-center text-slate-500 animate-pulse bg-slate-50">Loading line items...</div>
-  if (!po) return <div className="p-6 text-center text-red-500 bg-slate-50">Failed to load details.</div>
+  if (isLoading) return <div className="p-6 text-center text-muted-foreground animate-pulse bg-muted">Loading line items...</div>
+  if (!po) return <div className="p-6 text-center text-red-500 bg-muted">Failed to load details.</div>
 
   const items = po.items || []
 
   return (
-    <div className="bg-slate-50 border-x border-b border-slate-200 p-4 md:p-6 shadow-inner">
+    <div className="bg-muted border-x border-b border-border p-4 md:p-6 shadow-inner">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-slate-800">Line Items</h4>
-        {po.order_status === 'pending' && isManager && (
+        <h4 className="font-semibold text-foreground">Line Items</h4>
+        {po.status === 'pending' && isManager && (
            <ConfirmDialog 
              title="Receive Stock" 
              description="This will add all items in this Purchase Order to inventory stock levels at their designated locations. Proceed?" 
@@ -37,9 +37,9 @@ function ExpandedRow({ poId, isManager, onReceive }) {
         )}
       </div>
 
-      <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+      <div className="bg-background rounded-lg border border-border overflow-hidden">
         <table className="w-full text-sm text-left">
-          <thead className="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
+          <thead className="bg-slate-100 text-muted-foreground text-xs uppercase tracking-wider">
             <tr>
               <th className="px-4 py-3 font-semibold">Tool</th>
               <th className="px-4 py-3 font-semibold text-center">Qty Ordered</th>
@@ -53,23 +53,23 @@ function ExpandedRow({ poId, isManager, onReceive }) {
               <tr key={idx} className="hover:bg-slate-50/50">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                     <span className="font-mono text-[10px] bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-slate-500">{item.sku}</span>
+                     <span className="font-mono text-[10px] bg-slate-100 border border-border px-1.5 py-0.5 rounded text-muted-foreground">{item.sku}</span>
                      <div>
-                       <p className="font-medium text-slate-900">{item.tool_name}</p>
-                       <p className="text-xs text-slate-500">To: {item.location_name}</p>
+                       <p className="font-medium text-foreground">{item.tool_name}</p>
+                       <p className="text-xs text-muted-foreground">To: {item.location_name}</p>
                      </div>
                   </div>
                 </td>
                 <td className="px-4 py-3 text-center font-medium">{item.quantity}</td>
                 <td className="px-4 py-3 text-center">
-                   {po.order_status === 'completed' ? (
+                  {po.status === 'completed' ? (
                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100 font-bold border-0">{item.quantity_received || item.quantity}</Badge>
                    ) : (
                      <span className="text-slate-400">0</span>
                    )}
                 </td>
                 <td className="px-4 py-3 text-right">AED {Number(item.unit_price).toFixed(2)}</td>
-                <td className="px-4 py-3 text-right font-medium text-slate-800">
+                <td className="px-4 py-3 text-right font-medium text-foreground">
                   AED {(item.quantity * Number(item.unit_price)).toFixed(2)}
                 </td>
               </tr>
@@ -79,7 +79,7 @@ function ExpandedRow({ poId, isManager, onReceive }) {
       </div>
 
       {po.notes && (
-         <div className="mt-4 flex items-start gap-2 text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200">
+         <div className="mt-4 flex items-start gap-2 text-sm text-muted-foreground bg-background p-3 rounded-lg border border-border">
             <AlertCircle className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
             <p><span className="font-semibold text-slate-700 mr-1">Notes:</span>{po.notes}</p>
          </div>
@@ -117,15 +117,15 @@ export function PurchasesPage() {
         )}
       />
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">
         {isLoading ? (
-           <div className="p-8 flex justify-center"><div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-blue-600 animate-spin" /></div>
+           <div className="p-8 flex justify-center"><div className="w-8 h-8 rounded-full border-4 border-border border-t-blue-600 animate-spin" /></div>
         ) : purchases.length === 0 ? (
-           <div className="p-12 text-center text-slate-500">No purchase orders found.</div>
+           <div className="p-12 text-center text-muted-foreground">No purchase orders found.</div>
         ) : (
           <div className="overflow-x-auto w-full">
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
+              <thead className="bg-muted text-muted-foreground text-xs uppercase tracking-wider border-b border-border">
                 <tr>
                   <th className="px-4 py-3">Invoice #</th>
                   <th className="px-4 py-3">Supplier</th>
@@ -145,28 +145,28 @@ export function PurchasesPage() {
 
                    return (
                      <React.Fragment key={po.id}>
-                       <tr className={cn("hover:bg-slate-50 transition-colors", isExpanded ? "bg-slate-50" : "")}>
-                         <td className="px-4 py-4 font-mono font-medium text-slate-900 whitespace-nowrap">{po.invoice_number}</td>
+                       <tr className={cn("hover:bg-muted transition-colors", isExpanded ? "bg-muted" : "")}>
+                         <td className="px-4 py-4 font-mono font-medium text-foreground whitespace-nowrap">{po.invoice_number}</td>
                          <td className="px-4 py-4 font-medium text-slate-700 whitespace-nowrap">{po.supplier_name}</td>
-                         <td className="px-4 py-4 whitespace-nowrap text-slate-600">{new Date(po.invoice_date).toLocaleDateString()}</td>
+                         <td className="px-4 py-4 whitespace-nowrap text-muted-foreground">{new Date(po.invoice_date).toLocaleDateString()}</td>
                          <td className="px-4 py-4 text-center">
                             <Badge variant="secondary" className="bg-slate-100 text-slate-700">{itemsCount}</Badge>
                          </td>
-                         <td className="px-4 py-4 text-right text-xs text-slate-500 whitespace-nowrap">
+                         <td className="px-4 py-4 text-right text-xs text-muted-foreground whitespace-nowrap">
                             AED {Number(po.tax_amount).toFixed(2)}
                          </td>
-                         <td className="px-4 py-4 text-right font-bold text-slate-900 whitespace-nowrap">
+                         <td className="px-4 py-4 text-right font-bold text-foreground whitespace-nowrap">
                             AED {Number(po.total_amount).toFixed(2)}
                          </td>
                          <td className="px-4 py-4 text-center">
                             <StatusBadge type="purchase" status={po.payment_status} />
                          </td>
                          <td className="px-4 py-4 text-center">
-                            <StatusBadge type="purchase" status={po.order_status} />
+                           <StatusBadge type="purchase" status={po.status} />
                          </td>
                          <td className="px-4 py-4 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-2">
-                               {po.order_status === 'pending' && isManager && (
+                             {po.status === 'pending' && isManager && (
                                   <ConfirmDialog 
                                     title="Receive Stock" 
                                     description="This will add all items in this Purchase Order to inventory stock levels at their designated locations. Proceed?" 
@@ -177,7 +177,7 @@ export function PurchasesPage() {
                                     </Button>
                                   </ConfirmDialog>
                                )}
-                               <Button variant="ghost" size="sm" onClick={() => toggleRow(po.id)} className="h-8 gap-1 text-slate-500 hover:text-blue-700 hover:bg-blue-50">
+                               <Button variant="ghost" size="sm" onClick={() => toggleRow(po.id)} className="h-8 gap-1 text-muted-foreground hover:text-blue-700 hover:bg-blue-50">
                                   {isExpanded ? "Close" : "View"}
                                   {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                                </Button>

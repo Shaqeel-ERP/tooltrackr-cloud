@@ -48,7 +48,7 @@ export function TransferModal({ isOpen, onClose }) {
         fromLocationId: "",
         toLocationId: "",
         toolId: "",
-        quantity: 1,
+        quantity: "",
         notes: "",
       })
     }
@@ -77,17 +77,17 @@ export function TransferModal({ isOpen, onClose }) {
           searchKey: `${t.sku} ${t.name}`,
           renderLabel: (
             <div className="flex items-center gap-2 max-w-full overflow-hidden">
-               <span className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 flex-shrink-0">{t.sku}</span>
+               <span className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded border border-border flex-shrink-0">{t.sku}</span>
                <span className="truncate text-sm">{t.name}</span>
             </div>
           ),
           renderOption: (
             <div className="flex items-center justify-between w-full pr-2">
                <div className="flex items-center gap-2 overflow-hidden mr-2">
-                 <span className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 flex-shrink-0">{t.sku}</span>
+                 <span className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded border border-border flex-shrink-0">{t.sku}</span>
                  <span className="font-medium truncate text-sm">{t.name}</span>
                </div>
-               <span className="text-xs text-slate-500 whitespace-nowrap">{avail} available</span>
+               <span className="text-xs text-muted-foreground whitespace-nowrap">{avail} available</span>
             </div>
           )
         }
@@ -107,7 +107,7 @@ export function TransferModal({ isOpen, onClose }) {
   // Reset tool when location changes
   React.useEffect(() => {
     setValue("toolId", "")
-    setValue("quantity", 1)
+    setValue("quantity", "")
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromLocationId])
 
@@ -202,7 +202,7 @@ export function TransferModal({ isOpen, onClose }) {
               </p>
             )}
             {errors.quantity && <p className="text-xs text-red-500">{errors.quantity.message}</p>}
-            {remaining < 0 && <p className="text-xs text-red-500 mt-1">Exceeds available stock</p>}
+            {selectedToolId && quantity > 0 && maxAvailable !== null && remaining < 0 && <p className="text-xs text-red-500 mt-1">Exceeds available stock</p>}
           </div>
 
           <div className="space-y-2">

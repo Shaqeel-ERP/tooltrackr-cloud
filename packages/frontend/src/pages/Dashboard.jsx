@@ -28,8 +28,8 @@ function MovementIcon({ type }) {
     case 'transfer_out': return <div className="p-2 bg-blue-100 text-blue-600 rounded-full"><ArrowLeft className="w-4 h-4" /></div>;
     case 'lending': return <div className="p-2 bg-yellow-100 text-yellow-600 rounded-full"><HandMetal className="w-4 h-4" /></div>;
     case 'lending_return': return <div className="p-2 bg-green-100 text-green-600 rounded-full"><RotateCcw className="w-4 h-4" /></div>;
-    case 'adjustment': return <div className="p-2 bg-slate-100 text-slate-600 rounded-full"><SlidersHorizontal className="w-4 h-4" /></div>;
-    default: return <div className="p-2 bg-slate-100 text-slate-600 rounded-full"><Activity className="w-4 h-4" /></div>;
+    case 'adjustment': return <div className="p-2 bg-slate-100 text-muted-foreground rounded-full"><SlidersHorizontal className="w-4 h-4" /></div>;
+    default: return <div className="p-2 bg-slate-100 text-muted-foreground rounded-full"><Activity className="w-4 h-4" /></div>;
   }
 }
 
@@ -53,11 +53,11 @@ export function Dashboard() {
       <div className="flex flex-col gap-6 animate-pulse">
          <div className="h-20 bg-slate-200 rounded-lg w-1/3 mb-4"></div>
          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[1,2,3,4,5,6].map(i => <div key={i} className="h-28 bg-white rounded-xl border border-slate-200" />)}
+            {[1,2,3,4,5,6].map(i => <div key={i} className="h-28 bg-background rounded-xl border border-border" />)}
          </div>
          <div className="grid md:grid-cols-2 gap-6">
-            <div className="h-96 bg-white rounded-xl border border-slate-200" />
-            <div className="h-96 bg-white rounded-xl border border-slate-200" />
+            <div className="h-96 bg-background rounded-xl border border-border" />
+            <div className="h-96 bg-background rounded-xl border border-border" />
          </div>
       </div>
     );
@@ -94,11 +94,11 @@ export function Dashboard() {
       <div className="grid md:grid-cols-2 gap-6">
         
         {/* LEFT: Low Stock */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div className="bg-background rounded-xl shadow-sm border border-border flex flex-col overflow-hidden">
+          <div className="p-4 border-b border-border flex items-center justify-between bg-muted">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
-              <h2 className="font-semibold text-slate-800 tracking-tight">Low Stock Alerts</h2>
+              <h2 className="font-semibold text-foreground tracking-tight">Low Stock Alerts</h2>
             </div>
             {validLowItems.length > 0 && (
               <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded-full">
@@ -110,18 +110,18 @@ export function Dashboard() {
             {validLowItems.length === 0 ? (
                <div className="flex flex-col items-center justify-center py-12 text-center">
                   <CheckCircle2 className="w-10 h-10 text-green-500 mb-3" />
-                  <p className="text-slate-500 text-sm">All tools are well stocked</p>
+                  <p className="text-muted-foreground text-sm">All tools are well stocked</p>
                </div>
             ) : (
                <div className="divide-y divide-slate-100">
                  {validLowItems.slice(0, 8).map((item, idx) => (
-                   <div key={idx} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                   <div key={idx} className="p-4 flex items-center justify-between hover:bg-muted transition-colors">
                      <div className="min-w-0 pr-4">
                        <div className="flex items-center gap-2 mb-1">
-                         <span className="font-medium text-slate-900 truncate">{item.name}</span>
-                         <span className="px-1.5 py-0.5 bg-slate-100 text-slate-600 font-mono text-[10px] rounded border border-slate-200 flex-shrink-0">{item.sku}</span>
+                         <span className="font-medium text-foreground truncate">{item.name}</span>
+                         <span className="px-1.5 py-0.5 bg-slate-100 text-muted-foreground font-mono text-[10px] rounded border border-border flex-shrink-0">{item.sku}</span>
                        </div>
-                       <p className="text-xs text-slate-500">{item.loc_name}</p>
+                       <p className="text-xs text-muted-foreground">{item.loc_name}</p>
                      </div>
                      <div className="flex items-center gap-3 flex-shrink-0">
                        <span className={`px-2 py-1 text-xs font-semibold rounded-md ${item.quantity === 0 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
@@ -135,20 +135,20 @@ export function Dashboard() {
             )}
           </div>
           {validLowItems.length > 8 && (
-              <div className="p-3 bg-slate-50 border-t border-slate-200 text-center">
+              <div className="p-3 bg-muted border-t border-border text-center">
                 <Link to="/inventory" className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">View all alerts →</Link>
               </div>
           )}
         </div>
 
         {/* RIGHT: Overdue Loans */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div className="bg-background rounded-xl shadow-sm border border-border flex flex-col overflow-hidden">
+          <div className="p-4 border-b border-border flex items-center justify-between bg-muted">
             <div className="flex items-center gap-2">
               <div className="bg-red-100 p-1 rounded-md text-red-600">
                  <AlertTriangle className="w-4 h-4" />
               </div>
-              <h2 className="font-semibold text-slate-800 tracking-tight">Overdue Loans</h2>
+              <h2 className="font-semibold text-foreground tracking-tight">Overdue Loans</h2>
             </div>
             {(stats.overdue_items || []).length > 0 && (
               <span className="bg-red-100 text-red-800 text-xs font-bold px-2 py-0.5 rounded-full">
@@ -160,22 +160,22 @@ export function Dashboard() {
             {(!stats.overdue_items || stats.overdue_items.length === 0) ? (
                <div className="flex flex-col items-center justify-center py-12 text-center">
                   <CheckCircle2 className="w-10 h-10 text-green-500 mb-3" />
-                  <p className="text-slate-500 text-sm">No overdue loans</p>
+                  <p className="text-muted-foreground text-sm">No overdue loans</p>
                </div>
             ) : (
                <div className="divide-y divide-slate-100">
                  {stats.overdue_items.slice(0, 8).map((loan, idx) => {
                    const daysOverdue = Math.floor((Date.now() - new Date(loan.expected_return_date).getTime()) / 86400000);
                    return (
-                     <div key={idx} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                     <div key={idx} className="p-4 flex items-center justify-between hover:bg-muted transition-colors">
                        <div className="min-w-0 pr-4">
                          <div className="flex items-center gap-2 mb-1">
-                           <span className="font-medium text-slate-900 truncate">{loan.worker_name}</span>
+                           <span className="font-medium text-foreground truncate">{loan.worker_name}</span>
                            {loan.phone && <a href={`tel:${loan.phone}`} className="text-xs text-slate-400 hover:text-blue-600 hover:underline">{loan.phone}</a>}
                          </div>
                          <div className="flex items-center gap-2">
-                           <p className="text-xs text-slate-600 truncate">{loan.tool_name}</p>
-                           <span className="px-1.5 py-0.5 bg-slate-100 text-slate-500 font-mono text-[10px] rounded border border-slate-200">{loan.sku}</span>
+                           <p className="text-xs text-muted-foreground truncate">{loan.tool_name}</p>
+                           <span className="px-1.5 py-0.5 bg-slate-100 text-muted-foreground font-mono text-[10px] rounded border border-border">{loan.sku}</span>
                          </div>
                        </div>
                        <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
@@ -191,7 +191,7 @@ export function Dashboard() {
             )}
           </div>
           {(stats.overdue_items || []).length > 8 && (
-              <div className="p-3 bg-slate-50 border-t border-slate-200 text-center">
+              <div className="p-3 bg-muted border-t border-border text-center">
                 <Link to="/lending?tab=overdue" className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">View all overdue →</Link>
               </div>
           )}
@@ -200,9 +200,9 @@ export function Dashboard() {
       </div>
 
       {/* RECENT ACTIVITY */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-         <div className="p-4 border-b border-slate-200 flex items-center justify-between">
-            <h2 className="font-semibold text-slate-800 tracking-tight">Recent Activity</h2>
+      <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden mb-8">
+         <div className="p-4 border-b border-border flex items-center justify-between">
+            <h2 className="font-semibold text-foreground tracking-tight">Recent Activity</h2>
             <div className="flex items-center gap-1.5 px-2 py-1 bg-green-50 rounded-full border border-green-100">
                <span className="relative flex h-2 w-2">
                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -213,17 +213,17 @@ export function Dashboard() {
          </div>
          <div className="divide-y divide-slate-100">
            {(!stats.recent_movements || stats.recent_movements.length === 0) ? (
-              <div className="p-8 text-center text-sm text-slate-500">No recent activity.</div>
+              <div className="p-8 text-center text-sm text-muted-foreground">No recent activity.</div>
            ) : (
              stats.recent_movements.slice(0, 10).map((mov, idx) => (
-                <div key={idx} className="p-4 flex items-center md:items-start lg:items-center gap-4 hover:bg-slate-50 transition-colors">
+                <div key={idx} className="p-4 flex items-center md:items-start lg:items-center gap-4 hover:bg-muted transition-colors">
                    <MovementIcon type={mov.movement_type} />
                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                         <span className="font-medium text-slate-900 truncate">{mov.tool_name}</span>
-                         <span className="px-1.5 py-0.5 bg-slate-100 text-slate-500 font-mono text-[10px] rounded border border-slate-200 hidden sm:inline-block">{mov.sku}</span>
+                         <span className="font-medium text-foreground truncate">{mov.tool_name}</span>
+                         <span className="px-1.5 py-0.5 bg-slate-100 text-muted-foreground font-mono text-[10px] rounded border border-border hidden sm:inline-block">{mov.sku}</span>
                       </div>
-                      <p className="text-xs text-slate-500 truncate">{mov.loc_name} <span className="mx-1">·</span> {mov.performed_by}</p>
+                      <p className="text-xs text-muted-foreground truncate">{mov.loc_name} <span className="mx-1">·</span> {mov.performed_by}</p>
                    </div>
                    <div className="flex flex-col items-end gap-1 flex-shrink-0 text-right">
                       <span className={`font-semibold text-sm ${mov.quantity > 0 ? 'text-green-600' : 'text-red-600'}`}>

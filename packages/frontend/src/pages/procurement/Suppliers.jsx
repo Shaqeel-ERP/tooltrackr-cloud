@@ -153,8 +153,8 @@ export function SuppliersPage() {
              <Building2 className="w-5 h-5" />
            </div>
            <div>
-             <span className="font-semibold text-slate-900">{s.name}</span>
-             {s.contact_name && <span className="block text-xs text-slate-500">Attn: {s.contact_name}</span>}
+             <span className="font-semibold text-foreground">{s.name}</span>
+             {s.contact_name && <span className="block text-xs text-muted-foreground">Attn: {s.contact_name}</span>}
            </div>
         </div>
       )
@@ -164,18 +164,12 @@ export function SuppliersPage() {
       key: "contact",
       sortable: false,
       render: (s) => (
-        <div className="flex flex-col gap-1 text-sm text-slate-600">
-           {s.phone ? (
-             <a href={`tel:${s.phone}`} className="flex items-center gap-1.5 hover:text-blue-600">
-               <Phone className="w-3.5 h-3.5 text-slate-400" /> {s.phone}
-             </a>
-           ) : null}
-           {s.email ? (
-             <a href={`mailto:${s.email}`} className="flex items-center gap-1.5 hover:text-blue-600">
-               <Mail className="w-3.5 h-3.5 text-slate-400" /> {s.email}
-             </a>
-           ) : null}
-           {!s.phone && !s.email && <span className="text-slate-400 italic">No contact info</span>}
+        <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+          {s.contact_info ? (
+            <span className="max-w-[200px] truncate" title={s.contact_info}>{s.contact_info}</span>
+          ) : (
+            <span className="text-slate-400 italic">{s.notes ? s.notes : 'No contact info'}</span>
+          )}
         </div>
       )
     },
@@ -183,7 +177,7 @@ export function SuppliersPage() {
       header: "Address",
       key: "address",
       render: (s) => s.address ? (
-        <div className="flex items-start gap-1.5 text-sm text-slate-600">
+        <div className="flex items-start gap-1.5 text-sm text-muted-foreground">
            <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0" />
            <span className="max-w-[200px] truncate" title={s.address}>{s.address}</span>
         </div>
@@ -193,7 +187,7 @@ export function SuppliersPage() {
       header: "Notes",
       key: "notes",
       render: (s) => (
-        <span className="text-xs text-slate-500 max-w-[150px] truncate block" title={s.notes}>
+        <span className="text-xs text-muted-foreground max-w-[150px] truncate block" title={s.notes}>
           {s.notes || '-'}
         </span>
       )
@@ -205,7 +199,7 @@ export function SuppliersPage() {
       render: (s) => (
         <div className="flex items-center justify-end">
           {isManager && (
-            <Button variant="ghost" size="icon" onClick={() => handleEdit(s)} className="text-slate-500 hover:text-indigo-600 hover:bg-indigo-50">
+            <Button variant="ghost" size="icon" onClick={() => handleEdit(s)} className="text-muted-foreground hover:text-indigo-600 hover:bg-indigo-50">
               <Edit className="h-4 w-4" />
             </Button>
           )}
@@ -226,7 +220,7 @@ export function SuppliersPage() {
         )}
       />
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">
         <DataTable 
           columns={columns} 
           data={suppliers || []} 

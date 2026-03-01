@@ -17,11 +17,11 @@ function TransferCard({ transfer, isManager }) {
   const { mutateAsync: cancelTransfer } = useCancelTransfer()
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col hover:shadow-md transition-shadow">
+    <div className="bg-background rounded-xl shadow-sm border border-border p-4 flex flex-col hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start mb-3">
          <div className="flex-1 min-w-0 pr-2">
-            <h3 className="font-semibold text-slate-900 leading-tight mb-1 truncate">{transfer.tool_name}</h3>
-            <Badge variant="outline" className="font-mono text-[10px] bg-slate-50 text-slate-500 border-slate-200 font-normal">
+            <h3 className="font-semibold text-foreground leading-tight mb-1 truncate">{transfer.tool_name}</h3>
+            <Badge variant="outline" className="font-mono text-[10px] bg-muted text-muted-foreground border-border font-normal">
               {transfer.sku}
             </Badge>
          </div>
@@ -30,7 +30,7 @@ function TransferCard({ transfer, isManager }) {
          </div>
       </div>
 
-      <div className="flex flex-col gap-2 mb-4 bg-slate-50 rounded-lg p-3 border border-slate-100">
+      <div className="flex flex-col gap-2 mb-4 bg-muted rounded-lg p-3 border border-border">
          <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
             {transfer.from_loc_name}
             <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
@@ -40,12 +40,12 @@ function TransferCard({ transfer, isManager }) {
             Requested by {transfer.requested_by_name} · {new Date(transfer.created_at).toLocaleDateString()}
          </div>
          {transfer.notes && (
-            <p className="text-xs text-slate-500 italic mt-1 border-t border-slate-200 pt-2 line-clamp-2" title={transfer.notes}>"{transfer.notes}"</p>
+            <p className="text-xs text-muted-foreground italic mt-1 border-t border-border pt-2 line-clamp-2" title={transfer.notes}>"{transfer.notes}"</p>
          )}
       </div>
 
       <div className="mt-auto flex flex-col gap-3">
-        {transfer.status === 'draft' && (
+        {transfer.status === 'pending' && (
           <>
             <div className="flex items-center gap-1.5 text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded uppercase tracking-wider">
                <Info className="w-3 h-3" /> Stock not yet reserved
@@ -61,7 +61,7 @@ function TransferCard({ transfer, isManager }) {
                    destructive 
                    onConfirm={() => cancelTransfer(transfer.id)}
                  >
-                   <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50 border border-slate-200">Cancel</Button>
+                   <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50 border border-border">Cancel</Button>
                  </ConfirmDialog>
               </div>
             )}
@@ -84,7 +84,7 @@ function TransferCard({ transfer, isManager }) {
                    destructive 
                    onConfirm={() => cancelTransfer(transfer.id)}
                  >
-                   <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50 border border-slate-200">Cancel</Button>
+                   <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50 border border-border">Cancel</Button>
                  </ConfirmDialog>
               </div>
             )}
@@ -110,8 +110,8 @@ export function TransfersPage() {
   const [isModalOpen, setIsModalOpen] = React.useState(false)
 
   // Split into columns
-  const draft = transfers.filter(t => t.status === 'draft')
-  const approved = transfers.filter(t => t.status === 'approved')
+  const draft = transfers.filter(t => t.status === 'pending')
+  const approved = transfers.filter(t => t.status === 'approved' || t.status === 'in_transit')
   const completed = transfers.filter(t => t.status === 'completed')
     .sort((a,b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     .slice(0, 10) // Only show last 10 completed
@@ -144,7 +144,7 @@ export function TransfersPage() {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start pb-6">
         
         {/* COL 1: PENDING (DRAFT) */}
-        <div className="bg-slate-100 rounded-xl border border-slate-200 p-4 flex flex-col h-full max-h-min lg:max-h-full min-h-[400px]">
+        <div className="bg-slate-100 rounded-xl border border-border p-4 flex flex-col h-full max-h-min lg:max-h-full min-h-[400px]">
           <div className="flex items-center justify-between mb-4 px-1">
              <h2 className="font-bold text-slate-700 flex items-center gap-2">
                <span className="text-xl">📋</span> Pending Approval
@@ -153,7 +153,7 @@ export function TransfersPage() {
           </div>
           <div className="flex flex-col gap-3 flex-1 overflow-y-auto pr-1 pb-2">
              {draft.length === 0 ? (
-                <div className="my-auto text-center p-6 text-sm text-slate-500 font-medium bg-slate-50 rounded-lg border border-slate-200 border-dashed">
+                <div className="my-auto text-center p-6 text-sm text-muted-foreground font-medium bg-muted rounded-lg border border-border border-dashed">
                   No pending requests.
                 </div>
              ) : (

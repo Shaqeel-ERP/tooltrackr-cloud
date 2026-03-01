@@ -91,14 +91,14 @@ export function ToolsList() {
       header: "Name",
       key: "name",
       render: (tool) => (
-        <span className="font-medium text-slate-900 block min-w-[150px]">{tool.name}</span>
+        <span className="font-medium text-foreground block min-w-[150px]">{tool.name}</span>
       ),
     },
     {
       header: "Category",
       key: "category",
       render: (tool) => (
-        <Badge variant="outline" className="text-xs text-slate-600 bg-white">
+        <Badge variant="outline" className="text-xs text-muted-foreground bg-background">
           {tool.category}
         </Badge>
       ),
@@ -106,7 +106,7 @@ export function ToolsList() {
     {
       header: "Brand",
       key: "brand",
-      render: (tool) => <span className="text-slate-500 text-sm">{tool.brand || '-'}</span>,
+      render: (tool) => <span className="text-muted-foreground text-sm">{tool.brand || '-'}</span>,
     },
     {
       header: "Stock",
@@ -145,11 +145,11 @@ export function ToolsList() {
       sortable: false,
       render: (tool) => (
         <div className="flex items-center justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => navigate(`/inventory/${tool.id}`)} className="h-8 w-8 text-slate-500 hover:text-blue-600">
+          <Button variant="ghost" size="icon" onClick={() => navigate(`/inventory/${tool.id}`)} className="h-8 w-8 text-muted-foreground hover:text-blue-600">
             <Eye className="h-4 w-4" />
           </Button>
           {isManager && (
-            <Button variant="ghost" size="icon" onClick={(e) => handleEdit(e, tool)} className="h-8 w-8 text-slate-500 hover:text-amber-600">
+            <Button variant="ghost" size="icon" onClick={(e) => handleEdit(e, tool)} className="h-8 w-8 text-muted-foreground hover:text-amber-600">
               <Edit className="h-4 w-4" />
             </Button>
           )}
@@ -160,7 +160,7 @@ export function ToolsList() {
               destructive 
               onConfirm={(e) => handleDelete(e, tool.id)}
             >
-              <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="h-8 w-8 text-slate-500 hover:text-red-600 hover:bg-red-50">
+              <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="h-8 w-8 text-muted-foreground hover:text-red-600 hover:bg-red-50">
                 <Trash2 className="h-4 w-4" />
               </Button>
             </ConfirmDialog>
@@ -182,7 +182,7 @@ export function ToolsList() {
         )}
       />
 
-      <div className="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+      <div className="flex flex-col md:flex-row gap-4 items-center bg-background p-4 rounded-xl shadow-sm border border-border">
         <div className="relative flex-1 w-full min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input 
@@ -227,7 +227,7 @@ export function ToolsList() {
         )}
 
         {hasActiveFilters && (
-          <Button variant="ghost" onClick={clearFilters} className="text-slate-500 w-full md:w-auto">
+          <Button variant="ghost" onClick={clearFilters} className="text-muted-foreground w-full md:w-auto">
             <X className="h-4 w-4 mr-2" /> Clear
           </Button>
         )}
