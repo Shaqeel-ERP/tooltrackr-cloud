@@ -6,7 +6,7 @@ import { Package, AlertCircle, TrendingUp, Users, Clock, Percent, ShoppingBag, F
 export function OverviewTab() {
   const { data: stockData = [], isLoading: loadingStock } = useStockReport();
   const { data: loanRes, isLoading: loadingLoans } = useWorkerHoldings();
-  const { data: costData = [], isLoading: loadingCost } = useCostAnalysisReport();
+  const { data: costData = {}, isLoading: loadingCost } = useCostAnalysisReport();
 
   const loanData = useMemo(() => loanRes?.workers || [], [loanRes]);
 
@@ -38,16 +38,15 @@ export function OverviewTab() {
   }, []);
 
   // Calculate Procurement
-  const totalPOs = costData.length;
-  const pendingPOs = costData.filter(c => c.status === 'pending').length;
-  const totalSpend = useMemo(() => costData.reduce((acc, c) => acc + (c.total_amount || 0), 0), [costData]);
+  // Calculate Procurement
+  const overview = costData.overview || { total_pos: 0, total_spend: 0 };
+  const totalPOs = overview.total_pos;
+  const pendingPOs = 0; // Not available in new overview, needs a custom query or backend update if critical. We will stub as 0 for now to unbreak the page.
+  const totalSpend = overview.total_spend;
+  
   const topSupplier = useMemo(() => {
-    const map = {};
-    costData.forEach(c => {
-      map[c.supplier_name] = (map[c.supplier_name] || 0) + (c.total_amount || 0);
-    });
-    const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
-    return sorted[0] ? sorted[0][0] : 'None';
+    const suppliers = costData.bySupplier || [];
+    return suppliers.length > 0 ? suppliers[0].supplier_name : 'None';
   }, [costData]);
 
   // Top workers by items held

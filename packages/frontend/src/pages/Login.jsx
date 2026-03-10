@@ -44,49 +44,49 @@ export function LoginPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen w-full flex items-center justify-center bg-muted bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-100 via-slate-50 to-slate-200 p-4">
-      <div className="w-full max-w-md bg-background rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border p-8 sm:p-10 animate-in fade-in zoom-in-95 duration-500">
+      <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 sm:bg-muted sm:bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] sm:from-slate-100 sm:via-slate-50 sm:to-slate-200 p-4 sm:p-6 md:p-8">
+      <div className="w-full max-w-md bg-background rounded-3xl sm:shadow-[0_8px_30px_rgb(0,0,0,0.08)] sm:border sm:border-slate-200 p-6 sm:p-10 animate-in fade-in zoom-in-95 duration-500">
         
-        <div className="flex flex-col items-center justify-center space-y-3 mb-8">
-          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-inner border border-slate-100 overflow-hidden p-2">
-            <img src="/Favicon.png" alt="Company Logo" className="w-full h-full object-contain" />
+        <div className="flex flex-col items-center justify-center space-y-4 mb-10">
+          <div className="w-24 h-24 sm:w-28 sm:h-28 bg-white rounded-3xl flex items-center justify-center shadow-md border border-slate-100 p-3 overflow-hidden">
+            <img src="/Favicon.png" alt="Company Logo" className="w-full h-full object-contain drop-shadow-sm" />
           </div>
-          <div className="text-center space-y-2">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-tight">Jassem Alblooshi<br/>Technical Services L.L.C</h1>
-            <p className="text-sm font-medium text-muted-foreground">Warehouse Management System</p>
+          <div className="text-center space-y-1.5">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-tight">Jassem Alblooshi<br/><span className="text-xl sm:text-2xl text-blue-700">Technical Services L.L.C</span></h1>
+            <p className="text-sm font-medium text-slate-500 uppercase tracking-widest mt-2 block">Warehouse System</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="username" className="text-slate-700">Username</Label>
+            <Label htmlFor="username" className="text-slate-700 font-semibold">Username</Label>
             <Input 
               id="username" 
-              placeholder="Enter your username" 
+              placeholder="admin" 
               {...register("username")} 
-              className="h-11 bg-slate-50/50 border-border focus-visible:ring-blue-500"
+              className="h-12 text-base px-4 bg-slate-50 border-slate-200 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-shadow rounded-xl shadow-sm"
             />
-            {errors.username && <p className="text-xs text-red-500 font-medium">{errors.username.message}</p>}
+            {errors.username && <p className="text-xs text-red-500 font-medium px-1">{errors.username.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-slate-700">Password</Label>
+            <Label htmlFor="password" className="text-slate-700 font-semibold">Password</Label>
             <div className="relative">
               <Input 
                 id="password" 
                 type={showPassword ? "text" : "password"} 
                 {...register("password")} 
-                className="h-11 pr-10 bg-slate-50/50 border-border focus-visible:ring-blue-500" 
+                className="h-12 text-base px-4 pr-11 bg-slate-50 border-slate-200 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-shadow rounded-xl shadow-sm" 
               />
               <button 
                 type="button" 
-                className="absolute right-3 top-3 text-slate-400 hover:text-muted-foreground transition-colors focus:outline-none"
+                className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             </div>
-            {errors.password && <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>}
+            {errors.password && <p className="text-xs text-red-500 font-medium px-1">{errors.password.message}</p>}
           </div>
 
           {error && (
@@ -95,8 +95,8 @@ export function LoginPage() {
             </div>
           )}
 
-          <Button type="submit" disabled={isSubmitting} className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-base font-semibold shadow-sm transition-all mt-4">
-            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In"}
+          <Button type="submit" disabled={isSubmitting} className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-base font-bold shadow-md hover:shadow-lg transition-all mt-6">
+            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In to Dashboard"}
           </Button>
         </form>
 
