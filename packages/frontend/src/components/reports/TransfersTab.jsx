@@ -5,8 +5,9 @@ import { StatusBadge } from '@/components/shared/StatusBadge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Download, ArrowRight } from 'lucide-react';
-import { exportCSV } from '@/lib/utils';
+import { Download, ArrowRight, FileSpreadsheet, FileText } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { exportCSV, exportPDF, cn } from '@/lib/utils';
 
 export function TransfersTab() {
   const [dateFrom, setDateFrom] = useState(() => {
@@ -35,7 +36,32 @@ export function TransfersTab() {
     });
   }, [transfers, statusFilter, fromLocation, toLocation]);
 
-  const handleExport = () => exportCSV('transfers_report', filtered);
+  const handleExportCSV = () => exportCSV('transfers_report', filtered.map(t => ({
+    ToolName: t.tool_name,
+    SKU: t.sku,
+    Quantity: t.quantity,
+    From: t.from_location,
+    To: t.to_location,
+    Status: String(t.status).toUpperCase(),
+    RequestedBy: t.requested_by,
+    RequestedDate: new Date(t.requested_date).toLocaleDateString(),
+    CompletedDate: t.completed_at ? new Date(t.completed_at).toLocaleDateString() : '-'
+  })));
+
+  const handleExportPDF = () => {
+    const data = filtered.map(t => ({
+      ToolName: t.tool_name,
+      SKU: t.sku,
+      Quantity: t.quantity,
+      From: t.from_location,
+      To: t.to_location,
+      Status: String(t.status).toUpperCase(),
+      RequestedBy: t.requested_by,
+      RequestedDate: new Date(t.requested_date).toLocaleDateString(),
+      CompletedDate: t.completed_at ? new Date(t.completed_at).toLocaleDateString() : '-'
+    }));
+    exportPDF('transfers_report', 'Transfers Report', Object.keys(data[0] || {}), data);
+  };
 
   // Summaries
   const pending = filtered.filter(t => t.status === 'draft' || t.status === 'approved').length;
@@ -121,9 +147,21 @@ export function TransfersTab() {
             </Select>
           </div>
         </div>
-        <Button onClick={handleExport} variant="outline" className="gap-2 bg-background">
-          <Download className="w-4 h-4" /> Export CSV
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2 bg-background">
+              <Download className="w-4 h-4" /> Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleExportCSV} className="gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-green-600" /> Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportPDF} className="gap-2">
+              <FileText className="w-4 h-4 text-red-600" /> Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">

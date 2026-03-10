@@ -23,28 +23,59 @@ transfers.post('/', async (c) => {
   if (b.fromLocationId === b.toLocationId)
     return c.json({ error: 'Source and destination must differ' }, 400);
 
-  // Just validate stock exists — do NOT reserve yet (reservation happens on approve)
+  // Validate stock exists
   const row = await c.env.DB.prepare(
     `SELECT quantity - reserved_quantity avail FROM tool_locations WHERE tool_id=? AND location_id=?`
   ).bind(b.toolId, b.fromLocationId).first('avail');
   if ((row || 0) < b.quantity)
     return c.json({ error: `Only ${row || 0} available at source` }, 400);
 
-  // Insert transfer as draft — no stock changes
+  // Instant deduction from source
+  await c.env.DB.prepare(
+    `UPDATE tool_locations SET quantity=quantity-?, last_updated=? WHERE tool_id=? AND location_id=?`
+  ).bind(b.quantity, now(), b.toolId, b.fromLocationId).run();
+
+  // Instant addition to destination
+  const dest = await c.env.DB.prepare(
+    `SELECT id FROM tool_locations WHERE tool_id=? AND location_id=?`
+  ).bind(b.toolId, b.toLocationId).first();
+  if (dest) {
+    await c.env.DB.prepare(
+      `UPDATE tool_locations SET quantity=quantity+?, last_updated=? WHERE tool_id=? AND location_id=?`
+    ).bind(b.quantity, now(), b.toolId, b.toLocationId).run();
+  } else {
+    await c.env.DB.prepare(
+      `INSERT INTO tool_locations (tool_id, location_id, quantity, reserved_quantity, min_stock_level, max_stock_level, last_updated)
+       VALUES (?, ?, ?, 0, 0, 0, ?)`
+    ).bind(b.toolId, b.toLocationId, b.quantity, now()).run();
+  }
+
+  // Insert transfer as directly completed
   const r = await c.env.DB.prepare(
-    `INSERT INTO transfers (from_location_id, to_location_id, status, requested_by, transfer_date, notes, created_at)
-     VALUES (?, ?, 'draft', ?, ?, ?, ?)`
-  ).bind(b.fromLocationId, b.toLocationId, user.username, now(), b.notes || '', now()).run();
+    `INSERT INTO transfers (from_location_id, to_location_id, status, requested_by, approved_by, completed_by, transfer_date, completed_at, notes, created_at)
+     VALUES (?, ?, 'completed', ?, ?, ?, ?, ?, ?, ?)`
+  ).bind(b.fromLocationId, b.toLocationId, user.username, user.username, user.username, now(), now(), b.notes || '', now()).run();
   const tid = r.meta.last_row_id;
 
-  // Insert transfer_items
+  // Insert transfer_items with transferred_quantity matching requested immediately
   await c.env.DB.prepare(
-    `INSERT INTO transfer_items (transfer_id, tool_id, requested_quantity) VALUES (?, ?, ?)`
-  ).bind(tid, b.toolId, b.quantity).run();
+    `INSERT INTO transfer_items (transfer_id, tool_id, requested_quantity, transferred_quantity) VALUES (?, ?, ?, ?)`
+  ).bind(tid, b.toolId, b.quantity, b.quantity).run();
+
+  // Log both stock movements simultaneously
+  for (const [loc, type] of [
+    [b.fromLocationId, 'transfer_out'],
+    [b.toLocationId,   'transfer_in']
+  ]) {
+    await c.env.DB.prepare(
+      `INSERT INTO stock_movements (tool_id, location_id, movement_type, quantity, reference_type, reference_id, performed_by, performed_at)
+       VALUES (?, ?, ?, ?, 'transfer', ?, ?, ?)`
+    ).bind(b.toolId, loc, type, b.quantity, tid, user.username, now()).run();
+  }
 
   const t = await c.env.DB.prepare("SELECT sku FROM tools WHERE id=?").bind(b.toolId).first('sku');
-  await audit(c.env.DB, 'transfer_create', 'transfer', tid, user.username,
-    `Transfer request: ${b.quantity}x ${t || b.toolId} from loc ${b.fromLocationId} → ${b.toLocationId}`);
+  await audit(c.env.DB, 'transfer_create_complete', 'transfer', tid, user.username,
+    `Transfer completed instantly: ${b.quantity}x ${t || b.toolId} from loc ${b.fromLocationId} → ${b.toLocationId}`);
   return c.json({ ok: true, id: tid }, 201);
 });
 

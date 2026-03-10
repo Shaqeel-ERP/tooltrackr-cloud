@@ -48,11 +48,11 @@ export function LoginPage() {
       <div className="w-full max-w-md bg-background rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border p-8 sm:p-10 animate-in fade-in zoom-in-95 duration-500">
         
         <div className="flex flex-col items-center justify-center space-y-3 mb-8">
-          <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center shadow-inner border border-blue-100">
-            <Wrench className="w-8 h-8 text-blue-600" />
+          <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-inner border border-slate-100 overflow-hidden p-2">
+            <img src="/Favicon.png" alt="Company Logo" className="w-full h-full object-contain" />
           </div>
-          <div className="text-center space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">ToolTrackr</h1>
+          <div className="text-center space-y-2">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-tight">Jassem Alblooshi<br/>Technical Services L.L.C</h1>
             <p className="text-sm font-medium text-muted-foreground">Warehouse Management System</p>
           </div>
         </div>

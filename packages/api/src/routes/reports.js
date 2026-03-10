@@ -150,49 +150,38 @@ reports.get('/transfers', async (c) => {
 
 // 6. Cost Analysis (Ported existing logic)
 reports.get('/cost-analysis', async (c) => {
-    const { results } = await c.env.DB.prepare(`
-    SELECT
-      p.id, p.po_number, p.supplier_id, s.name as supplier_name,
-      p.status, p.total_amount, p.tax_amount, p.invoice_date, p.created_by,
-      pi.tool_id, t.name as tool_name, t.sku, t.category,
-      pi.quantity, pi.quantity_received, pi.unit_price
-    FROM purchases p
-    LEFT JOIN suppliers s ON s.id = p.supplier_id
-    LEFT JOIN purchase_items pi ON pi.purchase_id = p.id
-    LEFT JOIN tools t ON t.id = pi.tool_id
-    ORDER BY p.invoice_date DESC
-  `).all();
+    // 1. Overall Spend Overview
+    const { results: overviewResults } = await c.env.DB.prepare(`
+      SELECT
+        COALESCE(SUM(p.total_amount), 0) AS total_spend,
+        COALESCE(SUM(p.tax_amount), 0) AS total_tax,
+        COUNT(DISTINCT p.id) AS total_pos,
+        COALESCE(SUM(pi.received_quantity), 0) AS items_received
+      FROM purchases p
+      LEFT JOIN purchase_items pi ON pi.purchase_id = p.id;
+    `).all();
 
-    // Aggregate to Purchases with items
-    const map = {};
-    for (const row of results) {
-        if (!map[row.id]) {
-            map[row.id] = {
-                id: row.id,
-                po_number: row.po_number,
-                supplier_id: row.supplier_id,
-                supplier_name: row.supplier_name,
-                status: row.status,
-                total_amount: row.total_amount,
-                tax_amount: row.tax_amount,
-                invoice_date: row.invoice_date,
-                created_by: row.created_by,
-                items: []
-            };
-        }
-        if (row.tool_id) {
-            map[row.id].items.push({
-                tool_id: row.tool_id,
-                tool_name: row.tool_name,
-                sku: row.sku,
-                category: row.category,
-                quantity: row.quantity,
-                quantity_received: row.quantity_received,
-                unit_price: row.unit_price
-            });
-        }
-    }
-    return c.json(Object.values(map));
+    // 2. Spend by supplier
+    const { results: bySupplier } = await c.env.DB.prepare(`
+      SELECT s.name AS supplier_name, COUNT(DISTINCT p.id) AS order_count,
+        COALESCE(SUM(p.total_amount), 0) AS total_spent
+      FROM purchases p JOIN suppliers s ON p.supplier_id = s.id
+      GROUP BY p.supplier_id ORDER BY total_spent DESC;
+    `).all();
+
+    // 3. Spend by category
+    const { results: byCategory } = await c.env.DB.prepare(`
+      SELECT t.category, COUNT(pi.id) AS item_count,
+        COALESCE(SUM(pi.total_cost), 0) AS total_cost
+      FROM purchase_items pi JOIN tools t ON pi.tool_id = t.id
+      GROUP BY t.category ORDER BY total_cost DESC;
+    `).all();
+
+    return c.json({
+        overview: overviewResults[0] || { total_spend: 0, total_tax: 0, total_pos: 0, items_received: 0 },
+        bySupplier,
+        byCategory
+    });
 });
 
 export default reports;

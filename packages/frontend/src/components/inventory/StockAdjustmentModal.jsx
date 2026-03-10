@@ -64,7 +64,7 @@ export function StockAdjustmentModal({ isOpen, onClose, tool, locationId, locati
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-4 md:p-6">
         <DialogHeader>
           <DialogTitle>Adjust Stock — {tool.name}</DialogTitle>
           <DialogDescription>{locationName}</DialogDescription>

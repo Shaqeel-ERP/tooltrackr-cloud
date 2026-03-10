@@ -8,90 +8,42 @@ import { StatusBadge } from "@/components/shared/StatusBadge"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { PurchaseOrderModal } from "@/components/procurement/PurchaseOrderModal"
+import { PurchaseOrderDetailModal } from "@/components/procurement/PurchaseOrderDetailModal"
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog"
-import { Plus, ChevronDown, ChevronUp, PackageCheck, AlertCircle } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Plus, ChevronDown, ChevronUp, PackageCheck, AlertCircle, Printer, Loader2 } from "lucide-react"
+import { cn, printPO } from "@/lib/utils"
+import api from "@/lib/api"
 
-function ExpandedRow({ poId, isManager, onReceive }) {
-  const { data: po, isLoading } = usePurchaseDetail(poId)
-
-  if (isLoading) return <div className="p-6 text-center text-muted-foreground animate-pulse bg-muted">Loading line items...</div>
-  if (!po) return <div className="p-6 text-center text-red-500 bg-muted">Failed to load details.</div>
-
-  const items = po.items || []
+function PrintPOButton({ po, className }) {
+  const [loading, setLoading] = React.useState(false)
+  const handlePrint = async (e) => {
+    e.stopPropagation()
+    setLoading(true)
+    try {
+      const res = await api.get(`/api/purchases/${po.id}`)
+      printPO({ ...po, items: res.data.items })
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div className="bg-muted border-x border-b border-border p-4 md:p-6 shadow-inner">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="font-semibold text-foreground">Line Items</h4>
-        {po.status === 'pending' && isManager && (
-           <ConfirmDialog 
-             title="Receive Stock" 
-             description="This will add all items in this Purchase Order to inventory stock levels at their designated locations. Proceed?" 
-             onConfirm={() => onReceive(po.id)}
-           >
-             <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 gap-1.5 h-8">
-               <PackageCheck className="w-4 h-4" /> Receive All Stock
-             </Button>
-           </ConfirmDialog>
-        )}
-      </div>
-
-      <div className="bg-background rounded-lg border border-border overflow-hidden">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-slate-50 dark:bg-slate-800 text-muted-foreground dark:text-slate-300 text-xs uppercase tracking-wider border-b border-border dark:border-slate-700">
-            <tr>
-              <th className="px-4 py-3 font-semibold">Tool</th>
-              <th className="px-4 py-3 font-semibold text-center">Qty Ordered</th>
-              <th className="px-4 py-3 font-semibold text-center">Qty Received</th>
-              <th className="px-4 py-3 font-semibold text-right">Unit Cost</th>
-              <th className="px-4 py-3 font-semibold text-right">Total</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {items.map((item, idx) => {
-              const unitCost = Number(item.unit_price ?? item.unitPrice ?? item.unit_cost ?? 0);
-              const qty = Number(item.quantity ?? item.qty_ordered ?? 0);
-              const total = unitCost * qty;
-              return (
-                <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                      <span className="font-mono text-[10px] bg-slate-100 dark:bg-slate-900 border border-border px-1.5 py-0.5 rounded text-muted-foreground">{item.sku}</span>
-                     <div>
-                       <p className="font-medium text-foreground">{item.tool_name}</p>
-                       <p className="text-xs text-muted-foreground">To: {item.location_name}</p>
-                     </div>
-                  </div>
-                </td>
-                  <td className="px-4 py-3 text-center font-medium">{qty}</td>
-                <td className="px-4 py-3 text-center">
-                  {po.status === 'completed' ? (
-                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100 font-bold border-0">{item.quantity_received || qty}</Badge>
-                   ) : (
-                     <span className="text-slate-400">0</span>
-                   )}
-                </td>
-                  <td className="px-4 py-3 text-right">AED {unitCost.toFixed(2)}</td>
-                <td className="px-4 py-3 text-right font-medium text-foreground">
-                    AED {total.toFixed(2)}
-                </td>
-              </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {po.notes && (
-         <div className="mt-4 flex items-start gap-2 text-sm text-muted-foreground bg-background p-3 rounded-lg border border-border">
-            <AlertCircle className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-            <p><span className="font-semibold text-slate-700 mr-1">Notes:</span>{po.notes}</p>
-         </div>
-      )}
-    </div>
+    <Button 
+      variant="outline" 
+      size="sm" 
+      onClick={handlePrint} 
+      disabled={loading} 
+      className={cn("h-8 gap-1 border-slate-200 hover:bg-slate-50", className)}
+      title="Print PO"
+    >
+      {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" /> : <Printer className="w-3.5 h-3.5 text-slate-500" />}
+      <span className="hidden sm:inline">Print</span>
+    </Button>
   )
 }
+
 
 export function PurchasesPage() {
   const { hasRole } = useAuth()
@@ -101,14 +53,7 @@ export function PurchasesPage() {
   const { mutateAsync: receivePurchase } = useReceivePurchase()
   
   const [modalOpen, setModalOpen] = React.useState(false)
-  const [expandedRows, setExpandedRows] = React.useState(new Set())
-
-  const toggleRow = (id) => {
-    const newExpanded = new Set(expandedRows)
-    if (newExpanded.has(id)) newExpanded.delete(id)
-    else newExpanded.add(id)
-    setExpandedRows(newExpanded)
-  }
+  const [viewingPoId, setViewingPoId] = React.useState(null)
 
   return (
     <ErrorBoundary>
@@ -145,12 +90,11 @@ export function PurchasesPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {purchases.map(po => {
-                   const isExpanded = expandedRows.has(po.id)
-                  const itemsCount = po.item_count || 0
+                   const itemsCount = po.item_count || 0
 
                    return (
                      <React.Fragment key={po.id}>
-                       <tr className={cn("hover:bg-muted transition-colors", isExpanded ? "bg-muted" : "")}>
+                        <tr className="hover:bg-muted transition-colors">
                          <td className="px-4 py-4 font-mono font-medium text-foreground whitespace-nowrap">{po.invoice_number}</td>
                          <td className="px-4 py-4 font-medium text-slate-700 whitespace-nowrap">{po.supplier_name}</td>
                          <td className="px-4 py-4 whitespace-nowrap text-muted-foreground">{new Date(po.invoice_date).toLocaleDateString()}</td>
@@ -171,6 +115,7 @@ export function PurchasesPage() {
                          </td>
                          <td className="px-4 py-4 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-2">
+                               <PrintPOButton po={po} />
                              {po.status === 'pending' && isManager && (
                                   <ConfirmDialog 
                                     title="Receive Stock" 
@@ -182,22 +127,13 @@ export function PurchasesPage() {
                                     </Button>
                                   </ConfirmDialog>
                                )}
-                               <Button variant="ghost" size="sm" onClick={() => toggleRow(po.id)} className="h-8 gap-1 text-muted-foreground hover:text-blue-700 hover:bg-blue-50">
-                                  {isExpanded ? "Close" : "View"}
-                                  {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                               <Button variant="ghost" size="sm" onClick={() => setViewingPoId(po.id)} className="h-8 gap-1 text-muted-foreground hover:text-blue-700 hover:bg-blue-50">
+                                  View
+                                  <ChevronDown className="w-3.5 h-3.5" />
                                </Button>
                             </div>
                          </td>
                        </tr>
-                       {isExpanded && (
-                         <tr>
-                            <td colSpan="9" className="p-0 border-0">
-                               <div className="animate-in slide-in-from-top-2 fade-in duration-200">
-                               <ExpandedRow poId={po.id} isManager={isManager} onReceive={receivePurchase} />
-                               </div>
-                            </td>
-                         </tr>
-                       )}
                      </React.Fragment>
                    )
                 })}
@@ -208,6 +144,13 @@ export function PurchasesPage() {
       </div>
 
       <PurchaseOrderModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <PurchaseOrderDetailModal 
+        isOpen={!!viewingPoId} 
+        onClose={() => setViewingPoId(null)} 
+        poId={viewingPoId} 
+        isManager={isManager} 
+        onReceive={receivePurchase} 
+      />
     </div>
     </ErrorBoundary>
   )

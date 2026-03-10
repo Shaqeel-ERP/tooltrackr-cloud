@@ -5,8 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
-import { exportCSV, cn } from '@/lib/utils';
+import { Download, FileSpreadsheet, FileText } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { exportCSV, exportPDF, cn } from '@/lib/utils';
 
 export function MovementsTab() {
   const [dateFrom, setDateFrom] = useState(() => {
@@ -33,8 +34,33 @@ export function MovementsTab() {
     });
   }, [movements, type, location]);
 
-  const handleExport = () => {
-    exportCSV('movements_report', filtered);
+  const handleExportCSV = () => {
+    exportCSV('movements_report', filtered.map(m => ({
+      DateTime: new Date(m.created_at).toLocaleString(),
+      Type: String(m.movement_type).replace('_', ' ').toUpperCase(),
+      ToolName: m.tool_name,
+      SKU: m.sku,
+      Location: m.location_name,
+      Actor: m.created_by,
+      QuantityChange: m.quantity_change > 0 ? `+${m.quantity_change}` : String(m.quantity_change),
+      Notes: m.notes || '-',
+      ReferenceID: m.reference_id || '-'
+    })));
+  };
+
+  const handleExportPDF = () => {
+    const data = filtered.map(m => ({
+      DateTime: new Date(m.created_at).toLocaleString(),
+      Type: String(m.movement_type).replace('_', ' ').toUpperCase(),
+      ToolName: m.tool_name,
+      SKU: m.sku,
+      Location: m.location_name,
+      Actor: m.created_by,
+      QuantityChange: m.quantity_change > 0 ? `+${m.quantity_change}` : String(m.quantity_change),
+      Notes: m.notes || '-',
+      ReferenceID: m.reference_id || '-'
+    }));
+    exportPDF('movements_report', 'Movements Report', Object.keys(data[0] || {}), data);
   };
 
   // Summaries
@@ -112,9 +138,21 @@ export function MovementsTab() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={handleExport} variant="outline" className="gap-2 bg-background">
-          <Download className="w-4 h-4" /> Export CSV
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2 bg-background">
+              <Download className="w-4 h-4" /> Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleExportCSV} className="gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-green-600" /> Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportPDF} className="gap-2">
+              <FileText className="w-4 h-4 text-red-600" /> Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">

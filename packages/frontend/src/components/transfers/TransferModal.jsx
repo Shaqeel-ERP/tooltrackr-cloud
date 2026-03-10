@@ -130,7 +130,7 @@ export function TransferModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg w-full">
+      <DialogContent className="sm:max-w-lg w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-4 md:p-6">
         <DialogHeader>
           <DialogTitle>New Transfer Request</DialogTitle>
         </DialogHeader>
@@ -210,17 +210,11 @@ export function TransferModal({ isOpen, onClose }) {
             <Textarea {...register("notes")} placeholder="Reason for transfer, priority, or other details..." className="h-20" />
           </div>
 
-          {/* INFO NOTICE */}
-          <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg flex gap-3 text-sm items-start">
-            <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />
-            <p>Stock will not be reserved until a Manager approves this request.</p>
-          </div>
-
           <DialogFooter className="pt-2">
              <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>Cancel</Button>
              <Button type="submit" disabled={isPending || !selectedToolId || remaining < 0 || fromLocationId === toLocationId}>
                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-               Request Transfer
+               Create Transfer
              </Button>
           </DialogFooter>
 

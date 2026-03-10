@@ -68,7 +68,7 @@ export function ReturnToolModal({ isOpen, onClose, loan }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg w-full">
+      <DialogContent className="sm:max-w-lg w-[95vw] max-w-lg max-h-[90vh] overflow-y-auto p-4 md:p-6">
         <DialogHeader>
           <DialogTitle>Return Tool</DialogTitle>
         </DialogHeader>

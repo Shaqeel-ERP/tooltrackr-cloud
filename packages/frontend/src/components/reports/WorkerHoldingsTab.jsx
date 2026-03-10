@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronDown, ChevronRight, Download } from 'lucide-react';
+import { ChevronDown, ChevronRight, Download, FileText, FileSpreadsheet } from 'lucide-react';
 import { ReturnToolModal } from '@/components/lending/ReturnToolModal';
-import { exportCSV, cn } from '@/lib/utils';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { exportCSV, exportPDF, cn } from '@/lib/utils';
 
 export function WorkerHoldingsTab() {
   const { data: res, isLoading } = useWorkerHoldings();
@@ -37,7 +38,7 @@ export function WorkerHoldingsTab() {
     });
   }, [holdings, search, company, statusFilter]);
 
-  const handleExport = () => {
+  const handleExportCSV = () => {
     exportCSV('worker_holdings_report', filtered.map(w => ({
       WorkerName: w.name,
       Phone: w.phone || '',
@@ -46,6 +47,18 @@ export function WorkerHoldingsTab() {
       OverdueCount: w.overdue_count || 0,
       ReliabilityScore: w.total_loans && w.total_loans > 0 ? Math.round((w.on_time_returns / w.total_loans) * 100) : 'N/A'
     })));
+  };
+
+  const handleExportPDF = () => {
+    const data = filtered.map(w => ({
+      WorkerName: w.name,
+      Phone: w.phone || '',
+      Company: w.company || '',
+      ActiveItems: w.active_loan_count || 0,
+      OverdueCount: w.overdue_count || 0,
+      ReliabilityScore: w.total_loans && w.total_loans > 0 ? Math.round((w.on_time_returns / w.total_loans) * 100) : 'N/A'
+    }));
+    exportPDF('worker_holdings_report', 'Worker Holdings Report', Object.keys(data[0] || {}), data);
   };
 
   // SummaryStats
@@ -103,9 +116,21 @@ export function WorkerHoldingsTab() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={handleExport} variant="outline" className="gap-2 bg-background">
-          <Download className="w-4 h-4" /> Export CSV
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2 bg-background">
+              <Download className="w-4 h-4" /> Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleExportCSV} className="gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-green-600" /> Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportPDF} className="gap-2">
+              <FileText className="w-4 h-4 text-red-600" /> Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="space-y-3">

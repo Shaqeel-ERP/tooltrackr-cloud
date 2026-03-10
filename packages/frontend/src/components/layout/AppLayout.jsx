@@ -178,11 +178,11 @@ export function AppLayout() {
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-2 px-6 py-5 border-b border-border dark:border-slate-800">
-        <div className="bg-blue-600 p-1.5 rounded-lg text-white">
-          <Wrench className="w-5 h-5" />
-        </div>
-        <span className="text-lg font-bold text-foreground dark:text-white tracking-tight">ToolTrackr</span>
+      <div className="flex items-center gap-3 px-5 py-5 border-b border-border dark:border-slate-800">
+        <img src="/Favicon.png" alt="Logo" className="w-8 h-8 object-contain rounded" />
+        <span className="text-sm font-bold text-foreground dark:text-white tracking-tight leading-snug">
+          Jassem Alblooshi<br/>Technical Services L.L.C
+        </span>
       </div>
       <SidebarNav dashboardData={dashboardData} closeMenu={() => setMobileMenuOpen(false)} />
       <UserCard user={user} logout={logout} />

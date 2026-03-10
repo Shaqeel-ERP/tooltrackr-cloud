@@ -4,9 +4,9 @@ import { DataTable } from '@/components/shared/DataTable';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, TrendingUp, CheckCircle2, Download } from 'lucide-react';
-import { exportCSV } from '@/lib/utils';
-import { cn } from '@/lib/utils';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { AlertCircle, TrendingUp, CheckCircle2, Download, FileText, FileSpreadsheet } from 'lucide-react';
+import { exportCSV, exportPDF, cn } from '@/lib/utils';
 
 export function StockLevelsTab() {
   const { data: stockData = [], isLoading } = useStockReport();
@@ -35,8 +35,35 @@ export function StockLevelsTab() {
   const lowStock = filtered.filter(s => (s.available || 0) > 0 && (s.available || 0) <= (s.min_stock_level || 0) && s.min_stock_level > 0).length;
   const okStock = filtered.filter(s => (s.available || 0) > (s.min_stock_level || 0) || ((s.available || 0) > 0 && !(s.min_stock_level > 0))).length;
 
-  const handleExport = () => {
-    exportCSV('stock_levels_report', filtered);
+  const handleExportCSV = () => {
+    exportCSV('stock_levels_report', filtered.map(r => ({
+      SKU: r.sku,
+      ToolName: r.name,
+      Category: r.category,
+      Location: r.location_name,
+      TotalQuantity: r.total,
+      Reserved: r.reserved,
+      Available: r.available || 0,
+      MinLevel: r.min_stock_level || 0,
+      Status: (r.available || 0) === 0 ? 'Out of Stock' : ((r.available || 0) <= (r.min_stock_level || 0) && r.min_stock_level > 0 ? 'Low Stock' : 'In Stock'),
+      LastMovement: r.last_movement ? new Date(r.last_movement).toLocaleDateString() : '-'
+    })));
+  };
+
+  const handleExportPDF = () => {
+    const data = filtered.map(r => ({
+      SKU: r.sku,
+      ToolName: r.name,
+      Category: r.category,
+      Location: r.location_name,
+      TotalQuantity: r.total,
+      Reserved: r.reserved,
+      Available: r.available || 0,
+      MinLevel: r.min_stock_level || 0,
+      Status: (r.available || 0) === 0 ? 'Out of Stock' : ((r.available || 0) <= (r.min_stock_level || 0) && r.min_stock_level > 0 ? 'Low Stock' : 'In Stock'),
+      LastMovement: r.last_movement ? new Date(r.last_movement).toLocaleDateString() : '-'
+    }));
+    exportPDF('stock_levels_report', 'Stock Levels Report', Object.keys(data[0] || {}), data);
   };
 
   const columns = [
@@ -91,9 +118,21 @@ export function StockLevelsTab() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={handleExport} variant="outline" className="gap-2 bg-background">
-          <Download className="w-4 h-4" /> Export CSV
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2 bg-background">
+              <Download className="w-4 h-4" /> Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleExportCSV} className="gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-green-600" /> Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportPDF} className="gap-2">
+              <FileText className="w-4 h-4 text-red-600" /> Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="flex gap-4">

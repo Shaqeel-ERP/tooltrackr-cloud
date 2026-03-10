@@ -198,7 +198,7 @@ export function IssueToolModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto w-full p-4 md:p-6">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] max-w-2xl p-4 md:p-6">
         <DialogHeader className="mb-4">
           <DialogTitle className="text-xl">Issue Tool to Worker</DialogTitle>
         </DialogHeader>

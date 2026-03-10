@@ -5,8 +5,9 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
-import { exportCSV, cn } from '@/lib/utils';
+import { Download, FileText, FileSpreadsheet } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { exportCSV, exportPDF, cn } from '@/lib/utils';
 
 export function LoanHistoryTab() {
   const [dateFrom, setDateFrom] = useState(() => {
@@ -60,7 +61,57 @@ export function LoanHistoryTab() {
   const totalDays = filtered.reduce((acc, h) => acc + (h.days_out || 0), 0);
   const avgDuration = filtered.length > 0 ? (totalDays / filtered.length).toFixed(1) : 0;
 
-  const handleExport = () => exportCSV('loan_history_report', filtered);
+  const handleExportCSV = () => exportCSV('loan_history_report', filtered.map(h => {
+    const isReturned = !!h.returned_at;
+    const isLate = isReturned && h.due_date && new Date(h.returned_at) > new Date(h.due_date);
+    const isOverdue = !isReturned && h.due_date && new Date() > new Date(h.due_date);
+    let statusLabel = 'Active';
+    if (isReturned) {
+      statusLabel = isLate ? 'Returned Late' : 'Returned';
+    } else if (isOverdue) {
+      statusLabel = 'Overdue';
+    }
+  
+    return {
+      ToolName: h.tool_name,
+      SKU: h.sku,
+      WorkerName: h.worker_name,
+      Location: h.location_name,
+      IssuedDate: new Date(h.issued_date).toLocaleDateString(),
+      ReturnDate: h.returned_at ? new Date(h.returned_at).toLocaleDateString() : '-',
+      DaysOut: h.days_out,
+      Condition: h.return_condition || '-',
+      Status: statusLabel,
+      IssuedBy: h.issued_by
+    };
+  }));
+
+  const handleExportPDF = () => {
+    const data = filtered.map(h => {
+      const isReturned = !!h.returned_at;
+      const isLate = isReturned && h.due_date && new Date(h.returned_at) > new Date(h.due_date);
+      const isOverdue = !isReturned && h.due_date && new Date() > new Date(h.due_date);
+      let statusLabel = 'Active';
+      if (isReturned) {
+        statusLabel = isLate ? 'Returned Late' : 'Returned';
+      } else if (isOverdue) {
+        statusLabel = 'Overdue';
+      }
+      return {
+        ToolName: h.tool_name,
+        SKU: h.sku,
+        WorkerName: h.worker_name,
+        Location: h.location_name,
+        IssuedDate: new Date(h.issued_date).toLocaleDateString(),
+        ReturnDate: h.returned_at ? new Date(h.returned_at).toLocaleDateString() : '-',
+        DaysOut: h.days_out,
+        Condition: h.return_condition || '-',
+        Status: statusLabel,
+        IssuedBy: h.issued_by
+      }
+    });
+    exportPDF('loan_history_report', 'Loan History Report', Object.keys(data[0] || {}), data);
+  };
 
   const columns = [
     {
@@ -154,9 +205,21 @@ export function LoanHistoryTab() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={handleExport} variant="outline" className="gap-2 bg-background">
-          <Download className="w-4 h-4" /> Export
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2 bg-background">
+              <Download className="w-4 h-4" /> Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleExportCSV} className="gap-2">
+              <FileSpreadsheet className="w-4 h-4 text-green-600" /> Export as CSV
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleExportPDF} className="gap-2">
+              <FileText className="w-4 h-4 text-red-600" /> Export as PDF
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       <div className="bg-background rounded-xl shadow-sm border border-border overflow-hidden">

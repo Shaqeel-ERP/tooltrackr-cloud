@@ -68,7 +68,7 @@ export function MaintenanceModal({ isOpen, onClose, tool, locationId, locationNa
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-md w-[95vw] max-w-md max-h-[90vh] overflow-y-auto p-4 md:p-6">
         <DialogHeader>
           <DialogTitle>Send to Maintenance — {tool.name}</DialogTitle>
         </DialogHeader>

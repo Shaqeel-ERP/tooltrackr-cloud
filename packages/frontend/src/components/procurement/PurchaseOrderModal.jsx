@@ -126,12 +126,13 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-4xl w-[95vw] max-w-[95vw] p-0 overflow-hidden flex flex-col max-h-[90vh]">
+        <DialogHeader className="p-4 md:p-6 pb-0 shrink-0">
           <DialogTitle>New Purchase Order</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="flex-1 overflow-y-auto px-4 md:px-6 pb-4 md:pb-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           
           {/* SECTION 1: DETAILS */}
           <div className="bg-card dark:bg-slate-800 p-4 rounded-xl border border-border space-y-4">
@@ -195,10 +196,11 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
                  const lineTotal = currentQty * currentPrice
 
                  return (
-                   <div key={field.id} className="flex flex-col md:flex-row gap-3 bg-card dark:bg-slate-800 p-3 rounded-lg border border-border items-start md:items-end">
+                   <div key={field.id} className="relative flex flex-col md:flex-row gap-3 bg-card dark:bg-slate-800 p-3 pt-10 md:pt-3 md:pr-12 rounded-lg border border-border items-start md:items-end w-full">
                      
-                     <div className="flex-1 w-full space-y-1">
+                     <div className="w-full md:w-[30%] space-y-1 shrink-0">
                         {index === 0 && <Label className="text-xs text-slate-500 hidden md:block">Tool Item</Label>}
+                        <Label className="text-xs text-slate-500 block md:hidden">Tool Item</Label>
                         <Controller
                           control={control}
                           name={`items.${index}.toolId`}
@@ -214,8 +216,9 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
                         {errors.items?.[index]?.toolId && <p className="text-[10px] text-red-500 absolute">{errors.items[index].toolId.message}</p>}
                      </div>
 
-                     <div className="w-full md:w-48 space-y-1 shrink-0">
+                     <div className="w-full md:w-[25%] space-y-1 shrink-0">
                         {index === 0 && <Label className="text-xs text-slate-500 hidden md:block">Destination</Label>}
+                        <Label className="text-xs text-slate-500 block md:hidden">Destination</Label>
                         <Controller
                           control={control}
                           name={`items.${index}.locationId`}
@@ -233,25 +236,28 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
                         {errors.items?.[index]?.locationId && <p className="text-[10px] text-red-500 absolute">{errors.items[index].locationId.message}</p>}
                      </div>
 
-                     <div className="flex items-center gap-3 w-full md:w-auto overflow-visible">
-                       <div className="w-20 space-y-1">
+                     <div className="w-full md:flex-1 grid grid-cols-3 gap-3">
+                       <div className="space-y-1">
                           {index === 0 && <Label className="text-xs text-slate-500 hidden md:block">Qty</Label>}
+                          <Label className="text-xs text-slate-500 block md:hidden">Qty</Label>
                           <Input type="number" min="1" {...register(`items.${index}.quantity`)} />
                        </div>
                        
-                       <div className="w-24 space-y-1">
+                       <div className="space-y-1">
                           {index === 0 && <Label className="text-xs text-slate-500 hidden md:block">Unit Cost</Label>}
+                          <Label className="text-xs text-slate-500 block md:hidden">Unit Cost</Label>
                           <div className="relative">
                             <span className="absolute left-2.5 top-2.5 text-xs text-slate-400">AED</span>
-                            <Input type="number" step="0.01" min="0" className="pl-9" {...register(`items.${index}.unitPrice`)} />
+                            <Input type="number" step="0.01" min="0" className="pl-10 pr-2" {...register(`items.${index}.unitPrice`)} />
                           </div>
                        </div>
                        
-                       <div className="w-24 space-y-1 flex flex-col justify-end h-10">
+                       <div className="space-y-1">
                          {index === 0 && <Label className="text-xs text-muted-foreground hidden md:block">Total</Label>}
-                         <div className="text-sm font-semibold text-foreground bg-muted border border-border h-10 rounded-md px-3 flex items-center justify-end">
-                            {lineTotal.toFixed(2)}
-                          </div>
+                         <Label className="text-xs text-muted-foreground block md:hidden">Total</Label>
+                         <div className="text-sm font-semibold text-foreground bg-muted border border-border h-10 rounded-md px-2 flex items-center justify-end overflow-hidden text-ellipsis whitespace-nowrap">
+                           {lineTotal.toFixed(2)}
+                         </div>
                        </div>
                      </div>
 
@@ -259,7 +265,7 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
                        type="button" 
                        variant="ghost" 
                        size="icon" 
-                       className="text-slate-400 hover:text-red-600 hover:bg-red-50 h-10 w-10 shrink-0 self-end md:ml-1 absolute top-2 right-2 md:relative md:top-auto md:right-auto"
+                       className="text-slate-400 hover:text-red-600 hover:bg-red-50 h-8 w-8 absolute top-2 right-2 md:bottom-3 md:top-auto md:right-2"
                        onClick={() => remove(index)}
                        disabled={fields.length === 1}
                      >
@@ -311,7 +317,8 @@ export function PurchaseOrderModal({ isOpen, onClose }) {
              </Button>
           </DialogFooter>
 
-        </form>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   )
